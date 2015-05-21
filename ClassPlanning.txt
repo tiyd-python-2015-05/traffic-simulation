@@ -17,10 +17,11 @@ Assumptions
   *Position of car is recorded as the front of the car, so the back is 1 car length in -x dir
   *Cars move in the +x direction
   *Units are m, km/h, and seconds
+  *Set initial speed to half the desired speed, evenly spaced
 
 Responsibilities:
   Car:
-    Must know about car in front's current position
+    Must know about car in front's current position and speed
     Created with an accel rate, desired speed, size, min spacing,
       slowing chance, length (assume 5m for now)
     At each time step, make decision whether to speed up, slow down, or stop,
@@ -35,5 +36,8 @@ Responsibilities:
     Tells the car if it needs to reset the x position
 
   Simulation:
-    Is passed in a set of cars and a road
-    Advances the step count and polls each car's position
+    Is passed in a set of cars X and a roadX
+    Advances the step count and polls each car's position, and
+      reports the next car's position to each car
+    Saves position of each car into a time x road position numpy array
+    Returns the numpy array after the appropriate number of steps
