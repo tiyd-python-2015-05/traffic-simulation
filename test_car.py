@@ -24,4 +24,29 @@ def test_car_creation():
 
     assert car.speed == 60
 
-    assert car.desired_spacing == car.speed 
+    assert car.desired_spacing == car.speed
+
+    car = Car(desired_speed=130, length=6, accel_rate=3,
+                slowing_chance=0.2, decel_rate=3, init_speed=61,
+                desired_spacing_factor=2)
+    assert car.desired_speed == 130
+    assert car.length == 6
+    assert car.accel_rate == 3
+    assert -0.01 < car.slowing_chance - 0.2 < 0.1
+    assert car.decel_rate == 3
+
+    assert car.speed == 61
+
+    assert car.desired_spacing == car.speed * 2
+
+def test_car_accelerate():
+    car = Car()
+    assert car.speed == 60
+    car.accellerate()
+    assert car.speed == 62
+
+def test_car_stop():
+    car = Car()
+    assert car.speed == 60
+    car.stop()
+    assert car.speed == 0
