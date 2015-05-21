@@ -32,7 +32,7 @@ def test_car_matches_speed_car_in_front():
 def test_car_checks_position_and_sets_next_speed(location_1, location_2):
     """location 1 is the location of the current car, location 2 is the location
     of the second car"""
-    
+
 
 
 
