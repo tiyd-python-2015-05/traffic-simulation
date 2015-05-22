@@ -48,7 +48,7 @@ def test_calculate_slow_down():
     car_in_front.speed = 25
     car_in_front.location = 100
     assert my_car.calculate_slow_down(car_in_front) == True
-
+    
 def test_calculate_slow_down_when_circling_the_road():
     my_car = Car()
     car_in_front = Car()

@@ -5,7 +5,7 @@ class Car:
         self.size = 5
         self.speed = speed
         self.location = 0
-        self.decelerate_chance
+        self.decelerate_chance = 0
 
     def accelerate(self):
         """Can increase until speed reaches highest speed of 34m/s"""
