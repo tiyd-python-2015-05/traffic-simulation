@@ -23,10 +23,11 @@ Responsibilities:
   Car:
     Must know about car in front's current position and speed
     Created with an accel rate, desired speed, size, min spacing,
-      slowing chance, length (assume 5m for now)
+      slowing chance, length (assume 5m for now), position
     At each time step, make decision whether to speed up, slow down, or stop,
       based on leading car's current position/speed, self's desired following distance,
       and self's current speed, desired speed, and slowing chance, and road conditions
+      THEN update position with new speed, etc
     Car stops if continuing will cause a collision (collisions not modeled)
     Ask the Road current road condition
     Ask the Road if current position is valid or has to turn over
