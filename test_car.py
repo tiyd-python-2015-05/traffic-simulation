@@ -1,4 +1,4 @@
-from car import Car
+from car import Car, TeleportationError
 from road import Road
 from unittest import mock
 from nose.tools import raises
@@ -41,6 +41,9 @@ def test_car_creation():
     assert car.speed == 61
 
     assert car.desired_spacing == car.speed * 2
+    assert car.id == 1
+    car2 = Car(road)
+    assert car2.id == 2
 
 def test_car_accelerate():
     road = Road()
@@ -59,8 +62,9 @@ def test_car_stop():
 def test_update_position():
     road = Road()
     car = Car(road, init_speed=100)
+    car2 = Car(road, position=500)
     assert car.position == 0 and car.speed == 100
-    car.update_position()
+    car.update_position(car2)
     assert car.position == 0 + car.m_per_s * car.s_per_step
 
 def test_brake_if_needed():
@@ -85,6 +89,13 @@ def test_match_speed():
     assert car2.speed == 60 != car1.speed
     car1.brake_if_needed(car2)
     assert car1.speed == car2.speed == 60
+
+    car1 = Car(road, position=200, init_speed=100)
+    car2 = Car(road, position=240)
+    assert car2.speed == 60 != car1.speed
+    car1.step(car2)
+
+
 
 def test_car_slows_if_over_desired_speed():
     road = Road()
@@ -155,8 +166,9 @@ def test_car_is_validating_position_with_road():
 
     # In update_position
     car1 = Car(road, position=100, init_speed=36) # 36 km/h == 10 m/s
+    car2 = Car(road, position=500)
     car1.position = 1000
-    car1.update_position()
+    car1.update_position(car2)
     assert car1.position == 10
 
     # In brake_if_needed
@@ -170,6 +182,12 @@ def test_car_is_validating_position_with_road():
     did_brake = car1.brake_if_needed(car2)
     assert did_brake is False
 
+@raises(TeleportationError)
+def test_car_has_jumped_ahead():
+    road = Road()
+    car1 = Car(road, position=5)
+    car2 = Car(road, position=0)
+    car1.step(car2)
 
 # Add exception if car passes through another
 # Add pytest and nose to requirements.txt

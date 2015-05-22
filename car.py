@@ -1,6 +1,7 @@
 import random
 import road
-from itertools import cycle
+from itertools import cycle, count
+
 
 """
 Responsibilities:
@@ -17,10 +18,16 @@ Responsibilities:
     Ask the Road if current position is valid or has to turn over
 """
 
+class TeleportationError(Exception):
+    pass
+
 class Car():
+    _ids = count(0)
+
     def __init__(self, road, position=0, desired_speed=120, length=5, accel_rate=2,
                 slowing_chance=0.1, decel_rate=2, init_speed=60,
                 desired_spacing_factor=1, s_per_step=1):
+        self.id = next(self._ids)
         self.road = road
         self.desired_speed = desired_speed
         self.length = length
@@ -40,6 +47,9 @@ class Car():
     def m_per_s(self):
         kmh_to_mps = 1000 / 3600  # (1000m/km) / (60s * 60m)
         return self.speed * kmh_to_mps
+#       add str and class counter
+    def __repr__(self):
+        return 'id:{} x:{} s:{}'.format(self.id, self.position, self.speed)
 
     def accelerate(self):
         self.speed = self.speed + self.accel_rate
@@ -49,9 +59,11 @@ class Car():
     def stop(self):
         self.speed = 0
 
-    def update_position(self):
-        self.position = self.road.validate(self.position +
-                                           self.m_per_s * self.s_per_step)
+    def update_position(self, car2):
+        potential_position = self.potential_position()
+        if potential_position > self.road.validate(car2.position):
+            raise TeleportationError("{} is attempting to pass through {}.".format(self, car2))
+        self.position = potential_position
         return self.position
 
     def match_speed(self, car2):
@@ -62,16 +74,19 @@ class Car():
         if self.speed < 0:
             self.speed = 0
 
+    def potential_position(self):
+        return self.road.validate(self.position + self.m_per_s *
+                                  self.s_per_step)
+
     def brake_if_needed(self, car2):
-        rear_bumper = self.road.validate(car2.position - car2.length)
-        buffer_zone = self.road.validate(rear_bumper - self.desired_spacing)
-        potential_position = self.road.validate(self.position + self.m_per_s *
-                                                self.s_per_step)
-        print('rear_bumper: {}, buffer_zone: {}, potential_position: {}'.format(
-              rear_bumper, buffer_zone, potential_position))
         if self.speed > self.desired_speed:
             self.speed = self.desired_speed
 
+        rear_bumper = self.road.validate(car2.position - car2.length)
+        buffer_zone = self.road.validate(rear_bumper - self.desired_spacing)
+        potential_position = self.potential_position()
+        print('rear_bumper: {}, buffer_zone: {}, potential_position: {}'.format(
+              rear_bumper, buffer_zone, potential_position))
         if potential_position >= rear_bumper:
             self.stop()
             return True
@@ -88,5 +103,5 @@ class Car():
         did_brake = self.brake_if_needed(car2)
         if not did_brake:
             self.accelerate()
-        self.update_position()
+        self.update_position(car2)
         return self.position, self.speed
