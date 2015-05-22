@@ -18,8 +18,8 @@ def test_create_speed_matrix():
     sim = Simulation(4)
     sim.create_cars(4)
     sim.create_empty_data_matrix()
-    assert (sim.data_matrix.size) == 960
-    assert (sim.data_matrix.shape) == (2, 120, 4)
+    assert (sim.data_matrix.size) == 968
+    assert (sim.data_matrix.shape) == (2, 121, 4)
 
 def test_setup():
     sim = Simulation(4)
@@ -37,8 +37,8 @@ def test_cars_get_starting_places():
     assert sim.cars[0].location == 5
     assert sim.cars[1].location == 335
     assert np.array_equal(start_setup, [5, 335, 665, 995])
-    assert sim.data_matrix.shape == (2, 120, 4)
-    assert sim.data_matrix[0].shape == (120, 4)
+    assert sim.data_matrix.shape == (2, 121, 4)
+    assert sim.data_matrix[0].shape == (121, 4)
     assert sim.data_matrix[0][0].shape == (4,)
     # assert sim.data_matrix[0][0] == sim.data_matrix[0][0] + start_setup
     # not working getting list index out of range
@@ -103,3 +103,4 @@ def test_matrix_updates_from_cars():
         sim.decide_speed_and_record()
         assert sim.data_matrix[1][sim.turn_count][0] ==sim.cars[0].speed
         assert sim.cars[3].speed == 4
+

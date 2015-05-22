@@ -20,7 +20,7 @@ class Simulation:
         number_cars = len(self.cars)
         return np.linspace(5, 995, num=number_cars, dtype = "int64")
 
-    def create_empty_data_matrix(self, num=2, rows=120):
+    def create_empty_data_matrix(self, num=2, rows=121):
         """Creates empty matric for simulation"""
         self.data_matrix = np.zeros((num, rows, self.num_cars), dtype="int64")
 
@@ -52,9 +52,21 @@ class Simulation:
                 self.cars[i].set_speed(self.cars[0])
             else:
                 self.cars[i].set_speed(self.cars[i+1])
-        speed_list = [car.speed for car in self.cars]
-        self.data_matrix[1][self.turn_count] = speed_list
+        self.data_matrix[1][self.turn_count] = [car.speed for car in self.cars]
 #in the main function that runs the program make sure to include self.turn_count +=1 after decide_speed_and_record
 
     def run(self):
-        pass
+        self.create_cars(self.num_cars)
+        self.create_empty_data_matrix()
+        self.give_cars_starting_places()
+        while self.turn_count < 121:
+            self.advance_cars_and_record()
+            self.decide_speed_and_record()
+            self.turn_count += 1
+        return self.data_matrix
+
+def n_simulations(n=1000):
+    matrix_list = []
+    for i in range(n):
+        matrix_list.append(Simulation.run())
+    return matrix_list

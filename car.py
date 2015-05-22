@@ -5,7 +5,7 @@ class Car:
         self.size = 5
         self.speed = speed
         self.location = 0
-        self.decelerate_chance = 0
+        self.decelerate_chance = 1
 
     def accelerate(self):
         """Can increase until speed reaches highest speed of 34m/s"""
@@ -21,7 +21,11 @@ class Car:
 
     def slow_down(self, other):
         """Make the self.speed the same speed as car in front"""
-        self.speed = other.speed
+        # self.speed = other.speed  <- can't do this beacause you get tailgaters that never leave
+        if ((other.location - 5) - self.location) < 0:
+            self.speed = (other.location + 995 - self.location)
+        else:
+            self.speed = ((other.location - 5) - self.location)
 
     def calculate_slow_down(self, other):
         """Returns true if other car distance is less than speed of current car."""
@@ -45,6 +49,6 @@ class Car:
         if self.calculate_slow_down(other):
             self.slow_down(other)
         elif random.random() <= (.1 * self.decelerate_chance):
-                self.decelerate()
+            self.decelerate()
         else:
             self.accelerate()
