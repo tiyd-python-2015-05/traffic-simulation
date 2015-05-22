@@ -1,3 +1,5 @@
+import numpy as np
+
 """
   Simulation:
     Is passed in a set of cars X and a roadX
@@ -8,4 +10,41 @@
 """
 
 class Simulation():
-    pass
+    def __init__(self, cars, steps=60):
+        self.cars = cars
+        self.steps = steps
+        self.current_step = 0
+        self.step_positions = []
+        self.step_speeds = []
+        self.position_array = np.empty((0, len(cars)), float)
+        self.speed_array = np.empty((0, len(cars)), float)
+
+    def get_locations_speeds(self):
+        self.step_positions = []
+        self.speeds = []
+        for car in self.cars:
+            self.step_positions.append(car.position)
+        # print(positions)
+        # print(self.position_array)
+        # print(np.array([positions]))
+        # self.position_array = np.append(self.position_array,
+        #                               np.array([positions[::-1]]), axis=0)
+        return self.step_positions
+        # RETURN step_speeds
+
+    def start(self):
+        self.get_locations_speeds()
+
+
+    def step(self):
+        for index, car in enumerate(self.cars):
+            next_car = self.cars[self.valid_index(index - 1)]
+            car.step(next_car)
+            print(car)
+        return self.get_locations_speeds()
+
+
+    def valid_index(self, index):
+        num_cars = len(self.cars)
+        return index % num_cars if (index > num_cars - 1 or
+                                    index < 0) else index

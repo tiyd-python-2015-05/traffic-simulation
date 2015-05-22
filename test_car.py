@@ -14,6 +14,8 @@ from nose.tools import raises
     Ask the Road current road condition
     Ask the Road if current position is valid or has to turn over
 """
+### Note that this assumed we would be going through the cars array in
+### reverse order
 
 def test_car_creation():
     road = Road()
@@ -177,18 +179,28 @@ def test_car_is_validating_position_with_road():
     did_brake = car1.brake_if_needed(car2)
     assert did_brake is True
 
-    car1 = Car(road, position=500, init_speed=36)
-    car2 = Car(road, position=0)
-    did_brake = car1.brake_if_needed(car2)
-    assert did_brake is False
+    with mock.patch("random.random", return_value=1):
+        car1 = Car(road, position=500, init_speed=36)
+        car2 = Car(road, position=0)
+        did_brake = car1.brake_if_needed(car2)
+        assert did_brake is False
 
 @raises(TeleportationError)
 def test_car_has_jumped_ahead():
     road = Road()
     car1 = Car(road, position=5)
     car2 = Car(road, position=0)
-    car1.step(car2)
+    car2.update_position(car1)
 
+def test_car_is_already_ahead_no_teleportation_error():
+    road = Road()
+    car1 = Car(road, position=5, init_speed=34, slowing_chance=0)
+    car2 = Car(road, position=0, init_speed=36)
+    car1.step(car2)
+    assert car1.position == 15.0
+
+# Add test - when testing if car should accelerate, a car should never be
+# going faster than the distance between it and the next car
 # Add exception if car passes through another
 # Add pytest and nose to requirements.txt
 # What about the speed limit?

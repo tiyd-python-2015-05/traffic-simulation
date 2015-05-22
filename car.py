@@ -58,10 +58,13 @@ class Car():
 
     def stop(self):
         self.speed = 0
+        print('id#{} Stopping'.format(self.id))
 
     def update_position(self, car2):
+        leading_car = self.road.validate(car2.position)
         potential_position = self.potential_position()
-        if potential_position > self.road.validate(car2.position):
+        if potential_position > leading_car \
+            and self.road.validate(self.position) < leading_car:
             raise TeleportationError("{} is attempting to pass through {}.".format(self, car2))
         self.position = potential_position
         return self.position
@@ -73,6 +76,7 @@ class Car():
         self.speed = self.speed - self.decel_rate * self.s_per_step
         if self.speed < 0:
             self.speed = 0
+        print('id#{} Slowing'.format(self.id))
 
     def potential_position(self):
         return self.road.validate(self.position + self.m_per_s *
@@ -84,16 +88,28 @@ class Car():
 
         rear_bumper = self.road.validate(car2.position - car2.length)
         buffer_zone = self.road.validate(rear_bumper - self.desired_spacing)
+
+        # Avoid leapfrogging
+        if self.speed > buffer_zone:
+            self.speed = buffer_zone - decel_rate
+
         potential_position = self.potential_position()
-        print('rear_bumper: {}, buffer_zone: {}, potential_position: {}'.format(
-              rear_bumper, buffer_zone, potential_position))
-        if potential_position >= rear_bumper:
-            self.stop()
-            return True
-        elif potential_position >= buffer_zone:
-            self.match_speed(car2)
-            return True
-        elif random.random() < self.slowing_chance:
+
+        print('id#{} next bumper: {}, buffer_zone: {}, '  \
+              'potential_position: {}, current speed: {}' \
+              .format(self.id, rear_bumper, buffer_zone,
+              potential_position, self.speed))
+
+        if self.position < car2.position:    # FIXME: What if it rolls over?
+            # TODO: Add a test for lapping
+            if potential_position >= rear_bumper:
+                self.stop()
+                return True
+            elif potential_position >= buffer_zone:
+                self.match_speed(car2)
+                return True
+
+        if random.random() < self.slowing_chance:
             self.decelerate()
             return True
         else:
