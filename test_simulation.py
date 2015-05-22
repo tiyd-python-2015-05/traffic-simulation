@@ -36,14 +36,15 @@ def test_setup():
 
 def test_cars_get_starting_spots():
     sim = Simulation(cars)
-    start_setup = sim.give_cars_starting_places()
     sim.create_empty_data_matrix(num=2, rows=120, col=4)
+    start_setup = sim.give_cars_starting_places()
     assert (sim.cars[0]).location == 5
     assert (sim.cars[1]).location == 335
     assert np.array_equal(start_setup, [5, 335, 665, 995])
     assert sim.data_matrix.shape == (2, 120, 4)
     assert sim.data_matrix[0].shape == (120, 4)
     assert sim.data_matrix[0][0].shape == (4,)
+    assert sim.turn_count == 1
 
 
 

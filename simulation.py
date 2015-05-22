@@ -7,6 +7,7 @@ class Simulation:
         self.length = length
         self.data_matrix = []
         self.turn_count = 0
+        self.current_speeds = []
 #        self.position_matrix = []
 
 
@@ -22,6 +23,7 @@ class Simulation:
         for i in range(len(start_setup)):
             (self.cars[i]).location = start_setup[i]
         self.data_matrix[0][0] += start_setup
+        self.turn_count += 1
         return start_setup
 
     def create_empty_data_matrix(self, num=2, rows=120, col=30):
@@ -34,9 +36,36 @@ class Simulation:
 
 
 
-    def advance_cars(self):
-        speed_list = [car.speed for car in self.cars]
-        pass
+    def advance_cars_and_record(self):
+        self.current_speeds = [car.speed for car in self.cars]
+        self.data_matrix[0][self.turn_count] += self.current_speeds
+        for i in self.data_matrix[0][self.turn_count]:
+            if i > 1000:
+                i -= 1000
+        for i in range(len(cars)):
+            (self.cars[i]).location = self.data_matrix[0][self.turn_count][i]
+
+
+    def decide_speed(self):
+        for i in range(len(self.cars)):
+            if i == len(self.cars):
+                (self.cars[i]).set_speed(self.cars[0])
+            else:
+                (self.cars[i]).set_speed(self.cars[(i+1)])
+        self.turn_count += 1
+
+    def run(self):
+        self.create_empty_data_matrix()
+        self.give_cars_starting_places()
+        while self.turn_count < 120:
+            self.advance_cars_and_record()
+            self.decide_speed()
+        return self.data_matrix
+
+
+
+
+            #i think we need car ids for this
 
 
 
