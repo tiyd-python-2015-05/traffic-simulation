@@ -59,3 +59,14 @@ def test_dist_consistency():
     for i in range(10):
         sim.run_once()
     assert 1000-tol <= sim.dist_array().sum()+5*30 <= 1000 + tol
+
+def test_create_hard():
+
+    simz = Simulation(30, True)
+    print(simz.N)
+    assert simz.N == 7*30
+
+def test_hard_cars():
+
+    simz = Simulation(30, True)
+    assert len(simz.dist_array()) == 7*30

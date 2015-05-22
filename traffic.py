@@ -9,13 +9,30 @@ class Simulation:
 
     _delta = 1.0
 
-    def __init__(self, cars):
-        self.cars = cars
+    def __init__(self, cars, hard=False):
+        if hard:
+            self.track_length = 7000
+        else:
+            self.track_length = 1000
+        if type(cars) is list:
+            self.cars = cars
+        elif type(cars) is int: # variable holds car density
+            Ncars = cars * self.track_length // 1000
+            positions = np.linspace(0, self.track_length, num=Ncars+1)
+            car_list = [Car(positions[i]) for i in range(Ncars)]
+            for i in range(Ncars-1):
+                car_list[i].set_next(car_list[i+1])
+            car_list[Ncars-1].set_next(car_list[0])
+            self.cars = car_list
+        for a_car in self.cars:
+            a_car.speed = 0
+            a_car.advance_time()
+            if hard:
+                a_car.hard = True
+            a_car.track_length = self.track_length
         self.N = len(self.cars)
         self.time = 0
-        for car in self.cars:
-            car.speed = 0
-            car.advance_time()
+
 
     def __str__(self):
         ret_st = " position: "
@@ -24,9 +41,10 @@ class Simulation:
         ret_st += "\n speed: "
         for car in self.cars:
             ret_st += str(round(car.speed,2))+" "
+            '''
         ret_st += "\n leading: "
         for car in self.cars:
-            ret_st += str(round(car.is_leader(),2))+" "
+            ret_st += str(round(car.is_leader(),2))+" " '''
         return ret_st
 
 
@@ -95,8 +113,9 @@ class Car:
         self.top_speed = 33.333
         self.speed = 0
         self.acc = 0
-        self.track_length = 1000.
+        self.track_length = -1. # negative to signal should never use
         self.advance_time()
+        self.hard = False
 
     def __str__(self):
         return "car at "+str(round(self._pos,2)).ljust(6) \
@@ -113,7 +132,7 @@ class Car:
         '''Moves the car forward'''
         d = self.space()
 
-        if random.random() < 0.1: # normal conditions
+        if random.random() < self.brake_chance(): # normal conditions
             self.speed -= 2
         elif self.speed < self.top_speed:
             self.speed += 2
@@ -127,10 +146,23 @@ class Car:
         elif self.speed > self.top_speed:
             self.speed = self.top_speed
 
-        self._pos = (self._pos + self.speed) % 1000
+        self._pos = (self._pos + self.speed) % self.track_length
 
     def is_leader(self):
         return self.space() > (self.speed + 2.0) * 2.0
+
+    def brake_chance(self):
+        if self.hard:
+            if 1000 <= self._pos <= 2000:
+                return 1.4*0.1
+            elif 3000 <= self._pos <= 4000:
+                return 0.2
+            elif 5000 <= self._pos <= 6000:
+                return 1.2*0.1
+            else:
+                return 0.1
+        else:
+            return 0.1
 
     @property
     def pos(self):
@@ -148,33 +180,30 @@ class Car:
 
     def space(self):
         next_pos = self.next_car.pos_old
-        return (next_pos - self._pos) % 1000 - self.length
+        return (next_pos - self._pos) % self.track_length - self.length
 
 
 if __name__ == '__main__':
-    Ncars = 30
+    '''
+    Ncars = 30 # was used for easy mode creation
     positions = np.linspace(0, 1000, num=Ncars+1)
     cars = [Car(positions[i]) for i in range(Ncars)]
     for i in range(Ncars-1):
         cars[i].set_next(cars[i+1])
     cars[Ncars-1].set_next(cars[0])
     print(cars[0])
-    print(cars[0].space())
-    print(cars[Ncars-1].space())
-    print(1010%1000)
+    '''
 
-    sim = Simulation(cars)
-    for i in range(30):
+    sim = Simulation(30, True)
+    for i in range(300):
         sim.run_once()
 #        print(sim.speed)
-        print(np.mean(sim.speed_array()))
+        print(str(round(np.mean(sim.speed_array()),2)), end=" ")
+    print(" ")
 
     sim.run(60)
     print(" ")
     print(sim)
-    print([int(car.space()*10)/10 for car in cars])
-#    print([car.pos for car in cars])
-#    print([car.is_leader() for car in cars])
 
     print(sim.pos_array())
     print(" ")
