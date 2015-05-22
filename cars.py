@@ -5,10 +5,12 @@ from collections import deque
 
 class Simulator:
     def __init__(self, cars, road, delta):
-        self.cars = deque(cars, maxlen=len(cars))
+        self.cars = cars
 
         for car in self.cars:
             car.index = cars.index(car)
+            car.road_length = road.length
+            
             if car.index == len(self.cars) - 1:
                 car.next_car = self.cars[0]
             else:
@@ -27,6 +29,9 @@ class Simulator:
 
     @property
     def next(self):
+        """
+        the next location of each car
+        """
         self._next = self._loc + self._speeds * self.delta
         for car in self.cars:
             car.next = self._next[car.index]
@@ -34,6 +39,9 @@ class Simulator:
         return self._next
 
     def speed_change(self):
+        """
+        calculates the next speed for each car
+        """
         for car in self.cars:
             seg = self.road.segment(car.loc)
 
@@ -54,37 +62,51 @@ class Simulator:
         """
         checks next position
         for collision with safe zone and changes
-        speed to match car ahead, then rechecks.
+        speed to match car ahead if there
+        would have been one
         """
-
-        n= sum(1 for item in self.next if item > self.road.length)
-        self.cars.rotate(n)
-        again = False
-
+        self.next
+        
         for car in self.cars:
             if not car.safe:
                     self._speeds[car.index] = self._speeds[car.next_car.index]
-                    again = True
+
 
 
     def tell(self):
+        """
+        updates the car's information
+        """
         for car in self.cars:
             car.loc = self._loc[car.index]
             car.current_speed = self._speeds[car.index]
 
     def update(self):
+        """
+        pushes the locations and speeds into the history
+        and updates the locations,
+        then tells the cars what they did
+        """
         self.history.append(self._loc)
         self.speed_history.append(self._speeds)
         self._loc = self.next % self.road.length
         self.tell()
 
     def step(self):
+        """
+        one step forward
+        """
         self.speed_change()
         self.check_next()
         self.update()
 
 
     def loop(self, n):
+        """
+        calculates n steps forward
+        returns the history of those
+        steps
+        """
         m = 60
         while m:
             self.speed_change()
@@ -104,6 +126,11 @@ class Simulator:
         return np.array(self.history), np.array(self.speed_history)
 
     def reset(self):
+        """
+        flushes the history
+        resets to original locations
+        and zero speeds
+        """
         self._loc = self.history[0]
         self.history = []
         self.speeds = np.zeros(len(self.cars))
@@ -123,6 +150,7 @@ class Car:
         self.next_car = self
         self.min_mult = min_mult
         self.chance=chance
+        self.road_length = 1
 
     @property
     def next(self):
@@ -138,8 +166,8 @@ class Car:
         returns True if the next calculated location
         is safe
         """
-        return self.next_car.next > self.next + self.length * self.min_mult \
-               + self.current_speed
+        return self.next_car.next % self.road_length > (self.next + \
+               self.length * self.min_mult + self.current_speed) % self.road_length
 
 
 
