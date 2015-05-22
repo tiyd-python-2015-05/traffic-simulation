@@ -65,7 +65,7 @@ target/
 # Temporary data
 .ipynb_checkpoints/
 
-##Virtual Environment
+#Virtual Environments
 .envrc
 .direnv
 .idea
