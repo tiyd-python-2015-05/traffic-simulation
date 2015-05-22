@@ -90,5 +90,3 @@ class Car():
             self.accelerate()
         self.update_position()
         return self.position, self.speed
-
-# brake if needed first, if not braked, then accelerate

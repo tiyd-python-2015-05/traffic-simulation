@@ -16,7 +16,7 @@ Assumptions
   This section of road is one lane going one way.
   *Position of car is recorded as the front of the car, so the back is 1 car length in -x dir
   *Cars move in the +x direction
-  *Units are m, km/h, and seconds
+  *Units are m, km/h, and seconds, with a conversion to m/s and m done wherever possible
   *Set initial speed to half the desired speed, evenly spaced
 
 Responsibilities:

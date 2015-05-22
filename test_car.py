@@ -1,4 +1,4 @@
-from car import Car
+from car import Car, Road
 from unittest import mock
 
 """
@@ -87,7 +87,7 @@ def test_car_slows_if_over_desired_speed():
     assert car1.speed == 60
 
     with mock.patch("random.random", return_value=0.05):
-        # disable random braking
+        # force random braking
         car1.brake_if_needed(car2)
     assert car1.speed == 58
 
@@ -118,9 +118,19 @@ def test_step():
 
     car1 = Car(position=200, init_speed=100)
     car2 = Car(position=400)
-    car1.step(car2)
+    with mock.patch("random.random", return_value=1):
+        car1.step(car2)
     assert car1.speed == 102
 
+def test_accel_and_decel_are_mutually_exclusive():
+    for _ in range(100):
+        with mock.patch("random.random", return_value=1):
+            car1 = Car(position=200, init_speed=100)
+            car2 = Car(position=400)
+            car1.step(car2)
+            assert car1.speed == 102 or car1.speed == 98
 
+def test_car_is_validating_position_with_road():
+    assert False
 
 #Add road with looping zero
