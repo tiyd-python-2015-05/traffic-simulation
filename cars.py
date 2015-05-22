@@ -23,6 +23,7 @@ class Simulator:
         self._speeds = np.zeros(len(self.cars))
         self._next = np.zeros(len(self.cars))
         self.history = []
+        self.speed_history = []
 
     @property
     def next(self):
@@ -34,16 +35,18 @@ class Simulator:
 
     def speed_change(self):
         for car in self.cars:
+            seg = self.road.segment(car.loc)
+
             if car.current_speed == 0:
                 self._speeds[car.index] += car.inc
 
             elif car.current_speed < car.target_speed:
-                if random.random() <= .1:
+                if random.random() <= seg * car.chance:
                     self._speeds[car.index] -= car.inc
                 else:
                     self._speeds[car.index] += car.inc
             else:
-                if random.random() <= .1:
+                if random.random() <= seg * car.chance:
                     self._speeds[car.index] -= car.inc
 
 
@@ -71,6 +74,7 @@ class Simulator:
 
     def update(self):
         self.history.append(self._loc)
+        self.speed_history.append(self._speeds)
         self._loc = self.next % self.road.length
         self.tell()
 
@@ -90,14 +94,14 @@ class Simulator:
             m -= 1
 
         self.history = []
-
+        self.speed_history = []
         while n:
             self.speed_change()
             self.check_next()
             self.update()
             n -= 1
 
-        return np.array(self.history)
+        return np.array(self.history), np.array(self.speed_history)
 
     def reset(self):
         self._loc = self.history[0]
@@ -107,7 +111,7 @@ class Simulator:
 
 
 class Car:
-    def __init__(self, target_speed=34, length=5, inc=2):
+    def __init__(self, target_speed=34, length=5, inc=2, min_mult=1, chance=.1):
         self.loc = 0
         self.target_speed = target_speed
         self.length = length
@@ -117,6 +121,8 @@ class Car:
         self.index = 0
         self._next = 0
         self.next_car = self
+        self.min_mult = min_mult
+        self.chance=chance
 
     @property
     def next(self):
@@ -132,11 +138,22 @@ class Car:
         returns True if the next calculated location
         is safe
         """
-        return self.next_car.next > self.next + self.length + self.current_speed
+        return self.next_car.next > self.next + self.length * self.min_mult \
+               + self.current_speed
 
 
 
 
 class Road:
-    def __init__(self, length):
-        self.length = length
+    """
+    in 1km segments
+    """
+    def __init__(self, length=1, mods=[1]):
+        if len(mods) != length:
+            raise KeyError("Length and number of modifiers must match")
+
+        self.length = length*1000
+        self.mods = mods
+
+    def segment(self, location):
+        return self.mods[int(location/1000)] # assumes 1km segments
