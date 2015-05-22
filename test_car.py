@@ -1,5 +1,6 @@
 from car import Car, Road
 from unittest import mock
+from nose.tools import raises
 
 """
   Car:
@@ -130,7 +131,13 @@ def test_accel_and_decel_are_mutually_exclusive():
             car1.step(car2)
             assert car1.speed == 102 or car1.speed == 98
 
+@raises(TypeError)
+def test_car_requires_road():
+    car = Car()
+
+
 def test_car_is_validating_position_with_road():
     assert False
 
-#Add road with looping zero
+# Add road with looping zero
+# Add pytest and nose to requirements.txr

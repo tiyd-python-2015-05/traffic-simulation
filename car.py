@@ -21,7 +21,7 @@ class Road():
     # responsible for looping x values
 
 class Car():
-    def __init__(self, position=0, desired_speed=120, length=5, accel_rate=2,
+    def __init__(self, road, position=0, desired_speed=120, length=5, accel_rate=2,
                 slowing_chance=0.1, decel_rate=2, init_speed=60,
                 desired_spacing_factor=1, s_per_step=1):
         self.desired_speed = desired_speed
