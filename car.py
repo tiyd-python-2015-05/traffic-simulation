@@ -27,7 +27,13 @@ class Car:
 
     def slow_down(self, other):
         """Car sets itself to other car's speed."""
-        self.speed = other.speed
+        #self.speed = (((other.location - 5) - self.location))
+        #correct if other car just lapped 1000
+        if ((other.location - 5) - self.location ) < 0:
+            self.speed = ((other.location + 995) - self.location)
+        else:
+            self.speed = ((other.location - 5) - self.location)
+
 
 
     def calculate_slowdown(self, other):
