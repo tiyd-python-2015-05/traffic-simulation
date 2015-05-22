@@ -2,6 +2,14 @@ from traffic import *
 
 my_car = Car(0)
 
+Ncars = 30
+positions = np.linspace(0, 1000, num=Ncars+1)
+cars = [Car(positions[i]) for i in range(Ncars)]
+for i in range(Ncars-1):
+    cars[i].set_next(cars[i+1])
+cars[Ncars-1].set_next(cars[0])
+
+
 
 def test_magic_setters():
     my_car.pos = 5
@@ -37,7 +45,17 @@ def test_rollup3():
     car.set_next(car2)
     for i in range(40):
         car2.pos = (car2.pos + car2.speed) % 1000
+        car2.advance_time()
 #        print(car.space())
         car.move()
 #        print(str(car)+ " "+str(car2)+" "+str(car.space()))
     assert car.pos < car2.pos
+
+def test_dist_consistency():
+
+    tol = 1.0e-4
+    sim = Simulation(cars)
+
+    for i in range(10):
+        sim.run_once()
+    assert 1000-tol <= sim.dist_array().sum()+5*30 <= 1000 + tol

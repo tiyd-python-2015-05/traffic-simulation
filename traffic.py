@@ -13,6 +13,9 @@ class Simulation:
         self.cars = cars
         self.N = len(self.cars)
         self.time = 0
+        for car in self.cars:
+            car.speed = 0
+            car.advance_time()
 
     def __str__(self):
         ret_st = " position: "
@@ -48,16 +51,18 @@ class Simulation:
 
     def run_once(self):
         n = len(self.cars)
-        k = -1
-        for i in range(n):
-            if self.cars[i].is_leader():
-                k = i
-                break
-        if k == -1:
-            raise LeadCarException
+        # k = -1 # for implicit method
+        # for i in range(n):
+        #     if self.cars[i].is_leader():
+        #         k = i
+        #         break
+        # if k == -1:
+        #     raise LeadCarException
         for i in range(self.N):
-            j = self.index_fix(k - i)
-            self.cars[j].move()
+#            j = self.index_fix(k - i)
+            self.cars[i].move()
+        for car in self.cars:
+            car.advance_time()
 
     def index_fix(self, i):
         if i < 0:
@@ -91,10 +96,15 @@ class Car:
         self.speed = 0
         self.acc = 0
         self.track_length = 1000.
+        self.advance_time()
 
     def __str__(self):
         return "car at "+str(round(self._pos,2)).ljust(6) \
                +" going "+str(round(self.speed,2)).rjust(5)
+
+    def advance_time(self):
+        self.pos_old = self._pos
+        self.speed_old = self.speed
 
     def set_next(self, other):
         self.next_car = other
@@ -108,10 +118,10 @@ class Car:
         elif self.speed < self.top_speed:
             self.speed += 2
 
-        if d < 0: # limiter conditoins
+        if d < 0: # limiter conditions
             self.speed = 0
         elif d < self.speed:
-            self.speed = self.next_car.speed
+            self.speed = self.next_car.speed_old
         elif self.speed < 0:
             self.speed = 0
         elif self.speed > self.top_speed:
@@ -137,7 +147,7 @@ class Car:
         self._length = x
 
     def space(self):
-        next_pos = self.next_car._pos
+        next_pos = self.next_car.pos_old
         return (next_pos - self._pos) % 1000 - self.length
 
 
