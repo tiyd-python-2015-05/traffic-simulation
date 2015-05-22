@@ -1,4 +1,5 @@
 import random
+import road
 from itertools import cycle
 
 """
@@ -15,15 +16,12 @@ Responsibilities:
     Ask the Road current road condition
     Ask the Road if current position is valid or has to turn over
 """
-class Road():
-    pass
-    # pass into car also
-    # responsible for looping x values
 
 class Car():
     def __init__(self, road, position=0, desired_speed=120, length=5, accel_rate=2,
                 slowing_chance=0.1, decel_rate=2, init_speed=60,
                 desired_spacing_factor=1, s_per_step=1):
+        self.road = road
         self.desired_speed = desired_speed
         self.length = length
         self.accel_rate = accel_rate
@@ -31,7 +29,7 @@ class Car():
         self.decel_rate = decel_rate
         self.speed = init_speed
         self.desired_spacing_factor = desired_spacing_factor
-        self.position = position
+        self.position = road.validate(position)
         self.s_per_step = s_per_step
 
     @property
@@ -52,11 +50,12 @@ class Car():
         self.speed = 0
 
     def update_position(self):
-        self.position = self.position + self.m_per_s * self.s_per_step
+        self.position = self.road.validate(self.position +
+                                           self.m_per_s * self.s_per_step)
         return self.position
 
     def match_speed(self, car2):
-        self.speed = car2.speed
+        self.speed = car2.speed if car2.speed < self.speed else self.speed
 
     def decelerate(self):
         self.speed = self.speed - self.decel_rate * self.s_per_step
@@ -64,9 +63,10 @@ class Car():
             self.speed = 0
 
     def brake_if_needed(self, car2):
-        rear_bumper = car2.position - car2.length
-        buffer_zone = rear_bumper - self.desired_spacing
-        potential_position = self.position + self.m_per_s * self.s_per_step
+        rear_bumper = self.road.validate(car2.position - car2.length)
+        buffer_zone = self.road.validate(rear_bumper - self.desired_spacing)
+        potential_position = self.road.validate(self.position + self.m_per_s *
+                                                self.s_per_step)
         print('rear_bumper: {}, buffer_zone: {}, potential_position: {}'.format(
               rear_bumper, buffer_zone, potential_position))
         if self.speed > self.desired_speed:

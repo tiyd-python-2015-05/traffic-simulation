@@ -1,4 +1,5 @@
-from car import Car, Road
+from car import Car
+from road import Road
 from unittest import mock
 from nose.tools import raises
 
@@ -147,8 +148,29 @@ def test_car_requires_road():
 
 
 def test_car_is_validating_position_with_road():
-    assert False
+    # On init
+    road = Road()
+    car1 = Car(road, position=2000)
+    assert car1.position == 0
 
-# Add road with looping zero
+    # In update_position
+    car1 = Car(road, position=100, init_speed=36) # 36 km/h == 10 m/s
+    car1.position = 1000
+    car1.update_position()
+    assert car1.position == 10
+
+    # In brake_if_needed
+    car1 = Car(road, position=1005, init_speed=36)
+    car2 = Car(road, position=10)
+    did_brake = car1.brake_if_needed(car2)
+    assert did_brake is True
+
+    car1 = Car(road, position=500, init_speed=36)
+    car2 = Car(road, position=0)
+    did_brake = car1.brake_if_needed(car2)
+    assert did_brake is False
+
+
+# Add exception if car passes through another
 # Add pytest and nose to requirements.txt
 # What about the speed limit?
