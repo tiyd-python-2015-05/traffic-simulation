@@ -70,3 +70,26 @@ def test_hard_cars():
 
     simz = Simulation(30, True)
     assert len(simz.dist_array()) == 7*30
+
+def test_nightmare_cars():
+
+    simx = Simulation(30, False, True) # normal + nightmare
+
+    int_count = 0
+    for x in simx.cars:
+        if type(x) is not Car:
+            int_count += 1
+
+    assert int_count == 0
+
+
+def test_nightmare_cars2():
+
+    simx = Simulation(30, True, True) # hard + nightmare
+
+    int_count = 0
+    for x in simx.cars:
+        if type(x) is not Car:
+            int_count += 1
+
+    assert int_count == 0
