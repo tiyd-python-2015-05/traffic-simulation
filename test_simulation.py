@@ -41,13 +41,13 @@ def test_simulation_start():
 
 def test_simulation_start_and_step():
     sim = setup()
-
+    # TODO: Add proper testing for step_speeds
     # start: np.array([[100., 200.]]))
     with mock.patch("random.random", return_value=1):
-        sim.step_positions = sim.start()
+        step_positions, step_speeds = sim.start()
         assert sim.step_positions == [210, 110]
         # assert np.array_equal(sim.position_array, np.array([[100., 210.]]))
-        sim.step_positions = sim.step()
+        step_positions, step_speeds = sim.step()
         assert sim.step_positions == [220, 120]
         # assert np.array_equal(sim.position_array, np.array([[110., 220.]]))
 
@@ -60,8 +60,8 @@ def test_simulation_run():
         # first_step = sim.step()
 #        assert sim.step_positions == [210, 110]
         print('first_step', first_step)
-        print('np_position_array:', np.array([first_step]))
-        assert np.array_equal(np.array([first_step]), np.array([[210., 110.]]))
+#        print('np_position_array:', np.array([first_step]))
+        assert np.array_equal(np.array([first_step[0]]), np.array([[210., 110.]]))
         sim.run()
         assert sim.step_positions == [230, 130]
         assert np.array_equal(sim.position_array,

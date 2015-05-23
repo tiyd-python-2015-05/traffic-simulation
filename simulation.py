@@ -21,15 +21,16 @@ class Simulation():
 
     def get_locations_speeds(self):
         self.step_positions = []
-        self.speeds = []
+        self.step_speeds = []
         for car in self.cars:
             self.step_positions.append(car.position)
+            self.step_speeds.append(car.speed)
 #        print('step_positions: :', self.step_positions)
         # print(self.position_array)
         # print(np.array([positions]))
         # self.position_array = np.append(self.position_array,
         #                               np.array([positions[::-1]]), axis=0)
-        return self.step_positions
+        return self.step_positions, self.step_speeds
         # RETURN step_speeds
 
     def start(self):
@@ -37,11 +38,21 @@ class Simulation():
         self.position_array = np.append(self.position_array,
                               np.array([self.step_positions]),
                               axis=0)
-        self.step_positions = self.step()
+        self.speed_array = np.append(self.speed_array,
+                              np.array([self.step_speeds]),
+                              axis=0)
+        self.step_positions, self.step_speeds = self.step()
+
         self.position_array = np.append(self.position_array,
                               np.array([self.step_positions]),
                               axis=0)
-        return self.step_positions
+
+        self.speed_array = np.append(self.speed_array,
+                              np.array([self.step_speeds]),
+                              axis=0)
+
+
+        return self.step_positions, self.speed_array
         # FIXME: Duplicated from run() -- do we need first_step returned
 
     def step(self):
@@ -60,12 +71,16 @@ class Simulation():
         for n in range(self.steps - 1):  # - self.current_step):
 #            print('n: {} steps: {}'.format(n, self.steps))
             self.current_step = n
-            self.step_positions = self.step()
+            self.step_positions, self.step_speeds = self.step()
             self.position_array = np.append(self.position_array,
                                   np.array([self.step_positions]),
                                   axis=0)
+            self.speed_array = np.append(self.speed_array,
+                                  np.array([self.step_speeds]),
+                                  axis=0)
 #            print('run step_positions: ', repr(self.step_positions))
 #            print(self.position_array)
-        return self.position_array
+
+        return self.position_array, self.speed_array
 
 #
