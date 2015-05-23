@@ -23,9 +23,16 @@ class Car:
         """Make the self.speed the same speed as car in front"""
         # self.speed = other.speed  <- can't do this beacause you get tailgaters that never leave
         if ((other.location - 5) - self.location) < 0:
-            self.speed = (other.location + 995 - self.location)
+            if (((other.location + 995) - self.location) - 2) < 0:
+                self.speed = 0
+            else:
+                self.speed = (((other.location + 995) - self.location) - 2)
+
         else:
-            self.speed = ((other.location - 5) - self.location)
+            if (((other.location - 5) - self.location) - 2) < 0:
+                self.speed = 0
+            else:
+                self.speed = (((other.location - 5) - self.location) - 2)
 
     def calculate_slow_down(self, other):
         """Returns true if other car distance is less than speed of current car."""
@@ -35,7 +42,7 @@ class Car:
                 return True
             else:
                 return False
-        elif ((other.location - 5) - self.location) < self.speed:
+        elif ((other.location - 5) - self.location) < self.speed + 3:
             return True
         else:
             return False
@@ -48,7 +55,8 @@ class Car:
         """Sets car speed based on self.location and other.location"""
         if self.calculate_slow_down(other):
             self.slow_down(other)
-        elif random.random() <= (.1 * self.decelerate_chance):
-            self.decelerate()
         else:
-            self.accelerate()
+            if random.random() <= (.1 * self.decelerate_chance):
+                self.decelerate()
+            else:
+                self.accelerate()

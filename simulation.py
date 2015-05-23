@@ -65,11 +65,11 @@ class Simulation:
             self.turn_count += 1
         return self.data_matrix
 
-def n_simulations(n=1000):
+def n_simulations(n=1000, num_cars=30):
     sim_list = []
     matrix_list = []
     for i in range(n):
-        sim_list.append(Simulation())
+        sim_list.append(Simulation(num_cars=num_cars))
     for sim in sim_list:
         matrix_list.append(sim.run())
     return matrix_list

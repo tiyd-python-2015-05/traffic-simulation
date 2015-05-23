@@ -69,3 +69,4 @@ target/
 .envrc
 .direnv
 .idea
+.DS_Store
