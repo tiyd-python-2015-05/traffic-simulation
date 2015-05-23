@@ -91,7 +91,7 @@ class Car():
 
         # Avoid leapfrogging
         if self.speed > buffer_zone:
-            self.speed = buffer_zone - decel_rate
+            self.speed = buffer_zone - self.decel_rate
 
         potential_position = self.potential_position()
 
