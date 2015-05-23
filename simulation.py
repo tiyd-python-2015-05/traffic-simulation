@@ -24,7 +24,7 @@ class Simulation():
         self.speeds = []
         for car in self.cars:
             self.step_positions.append(car.position)
-        # print(positions)
+        print('step_positions: :', self.step_positions)
         # print(self.position_array)
         # print(np.array([positions]))
         # self.position_array = np.append(self.position_array,
@@ -34,7 +34,15 @@ class Simulation():
 
     def start(self):
         self.get_locations_speeds()
-
+        self.position_array = np.append(self.position_array,
+                              np.array([self.step_positions]),
+                              axis=0)
+        self.step_positions = self.step()
+        self.position_array = np.append(self.position_array,
+                              np.array([self.step_positions]),
+                              axis=0)
+        return self.step_positions
+        # FIXME: Duplicated from run() -- do we need first_step returned
 
     def step(self):
         for index, car in enumerate(self.cars):
@@ -48,3 +56,16 @@ class Simulation():
         num_cars = len(self.cars)
         return index % num_cars if (index > num_cars - 1 or
                                     index < 0) else index
+    def run(self):
+        for n in range(self.steps - 1):  # - self.current_step):
+            print('n: {} steps: {}'.format(n, self.steps))
+            self.current_step = n
+            self.step_positions = self.step()
+            self.position_array = np.append(self.position_array,
+                                  np.array([self.step_positions]),
+                                  axis=0)
+            print('run step_positions: ', repr(self.step_positions))
+            print(self.position_array)
+
+
+#

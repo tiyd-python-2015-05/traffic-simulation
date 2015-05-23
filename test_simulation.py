@@ -39,14 +39,34 @@ def test_simulation_start():
     # assert type(sim.position_array) is np.ndarray
     # assert np.array_equal(sim.position_array, np.array([[100., 200.]]))
 
-def test_simulation_step():
+def test_simulation_start_and_step():
     sim = setup()
-    sim.start()
+
     # start: np.array([[100., 200.]]))
     with mock.patch("random.random", return_value=1):
-        sim.step()
+        sim.step_positions = sim.start()
         assert sim.step_positions == [210, 110]
         # assert np.array_equal(sim.position_array, np.array([[100., 210.]]))
-        sim.step()
+        sim.step_positions = sim.step()
         assert sim.step_positions == [220, 120]
         # assert np.array_equal(sim.position_array, np.array([[110., 220.]]))
+
+def test_simulation_run():
+    sim = setup()
+    sim.steps = 3
+    # start: np.array([[100., 200.]]))
+    with mock.patch("random.random", return_value=1):
+        first_step = sim.start()
+        # first_step = sim.step()
+#        assert sim.step_positions == [210, 110]
+        print('first_step', first_step)
+        print('np_position_array:', np.array([first_step]))
+        assert np.array_equal(np.array([first_step]), np.array([[210., 110.]]))
+        sim.run()
+        assert sim.step_positions == [230, 130]
+        assert np.array_equal(sim.position_array,
+                              np.array([[200., 100.],
+                                        [210., 110.],
+                                        [220., 120.],
+                                        [230., 130.]
+                                        ]))
