@@ -53,16 +53,3 @@ class Car:
 class Road:
     def __init__(self, length = 1000):
         self.length = length
-
-
-
-class Simulation:
-    def __init__(self, cars = 30):
-        self.cars = cars
-
-    
-
-
-
-if __name__ == "__main__":
-    bug = Car()
