@@ -225,13 +225,10 @@ class Car:
         elif self.speed < self.top_speed:
             self.speed += self.acc
 
-        if d < self.speed * self.spacing_factor:
-            #self.speed = self.next_car.speed_old
-            self.speed = d
+        if d < self.speed * self.spacing_factor or self.speed > self.top_speed:
+            self.speed = min(d, self.top_speed)
         elif self.speed < 0:
             self.speed = 0
-        elif self.speed > self.top_speed:
-            self.speed = self.top_speed
 
         d = self.space()
         if d < 0:
