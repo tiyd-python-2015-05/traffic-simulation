@@ -29,10 +29,16 @@ class Car:
         """Car sets itself to other car's speed."""
         #self.speed = (((other.location - 5) - self.location))
         #correct if other car just lapped 1000
-        if ((other.location - 5) - self.location ) < 0:
-            self.speed = ((other.location + 995) - self.location)
+        if ((other.location - 5) - self.location) < 0:
+            if (((other.location + 995) - self.location) - 2) < 0:
+                self.speed = 0
+            else:
+                self.speed = (((other.location + 995) - self.location) - 2)
         else:
-            self.speed = ((other.location - 5) - self.location)
+            if (((other.location - 5) - self.location) - 2) < 0:
+                self.speed = 0
+            else:
+                self.speed = (((other.location - 5) - self.location) - 2)
 
 
 
@@ -44,7 +50,7 @@ class Car:
                 return True
             else:
                 return False
-        elif ((other.location - 5) - self.location) < self.speed:
+        elif ((other.location - 5) - self.location) < self.speed + 3:
             return True
         else:
             return False
@@ -57,10 +63,11 @@ class Car:
         """Sets car speed based on self.location and other.location"""
         if self.calculate_slowdown(other):
             self.slow_down(other)
-        elif random.random() <= (.1 * self.decelerate_chance):
-            self.decelerate()
         else:
-            self.accelerate()
+            if random.random() <= (.1 * self.decelerate_chance):
+                self.decelerate()
+            else:
+                self.accelerate()
 
 
 
