@@ -66,7 +66,10 @@ class Simulation:
         return self.data_matrix
 
 def n_simulations(n=1000):
+    sim_list = []
     matrix_list = []
     for i in range(n):
-        matrix_list.append(Simulation.run())
+        sim_list.append(Simulation())
+    for sim in sim_list:
+        matrix_list.append(sim.run())
     return matrix_list
