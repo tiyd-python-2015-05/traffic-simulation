@@ -68,3 +68,5 @@ target/
 .envrc
 .direnv/
 .idea/
+
+3d_scatter.ipynb
