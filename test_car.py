@@ -3,17 +3,7 @@ from road import Road
 from unittest import mock
 from nose.tools import raises
 
-"""
-  Car:
-    Must know about car in front's current position and speed
-    At each time step, update position if possible
-      then make decision whether to speed up, slow down, or stop,
-      based on leading car's current position/speed, self's desired following distance,
-      and self's current speed, desired speed, and slowing chance, and road conditions
-    Car stops if continuing will cause a collision (collisions not modeled)
-    Ask the Road current road condition
-    Ask the Road if current position is valid or has to turn over
-"""
+
 ### Note that this assumed we would be going through the cars array in
 ### reverse order
 
