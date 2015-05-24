@@ -2,7 +2,7 @@ from hard_cars import Car
 import numpy as np
 
 class Simulation:
-    def __init__(self, num_cars=30, length=1000):
+    def __init__(self, num_cars=210, length=7000):
         self.num_cars = num_cars
         self.cars = []
         self.length = length
@@ -11,7 +11,7 @@ class Simulation:
         self.current_speeds = []
 
 
-    def create_cars(self, num=30):
+    def create_cars(self, num=210):
         for i in range(num):
             self.cars.append(Car())
 
@@ -19,7 +19,7 @@ class Simulation:
     def create_starting_array(self):
         """Line up cars equal distance along the road."""
         number_cars = len(self.cars)
-        return np.linspace(5, 995, num=number_cars, dtype = "int64")
+        return np.linspace(5, 6995, num=number_cars, dtype = "int64")
 
 
     def give_cars_starting_places(self):
@@ -33,19 +33,19 @@ class Simulation:
         return start_setup
 
 
-    def create_empty_data_matrix(self, num=2, rows=121):
+    def create_empty_data_matrix(self, num=2, rows=481):
         """Creates empty matrix for simulation"""
         self.data_matrix = np.zeros((num, rows, self.num_cars), dtype = "int64")
 
 
     def advance_cars_and_record(self):
         """Sets new car location in data matrix.  Changes location in cars. Tests to see
-        if any cars have crossed 1000."""
+        if any cars have crossed 7000."""
         self.data_matrix[0][self.turn_count] = self.data_matrix[0][self.turn_count - 1] \
                                                + self.data_matrix[1][self.turn_count - 1]
         for i in np.nditer(self.data_matrix[0][self.turn_count], op_flags=['readwrite']):
-            if i > 1000:
-                i -=1000
+            if i > 7000:
+                i -=7000
         for i in range(len(self.cars)):
             (self.cars[i]).location = self.data_matrix[0][self.turn_count][i]
 
@@ -64,14 +64,14 @@ class Simulation:
         self.create_cars(self.num_cars)
         self.create_empty_data_matrix()
         self.give_cars_starting_places()
-        while self.turn_count < 121:
+        while self.turn_count < 481:
             self.advance_cars_and_record()
             self.decide_speed_and_record()
             self.turn_count += 1
         return self.data_matrix
 
 
-def n_simulations(n=1000, num_cars=30):
+def n_simulations(n=1000, num_cars=210):
     sim_list = []
     matrix_list = []
     for i in range(n):

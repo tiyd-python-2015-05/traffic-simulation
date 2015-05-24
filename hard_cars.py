@@ -28,12 +28,12 @@ class Car:
     def slow_down(self, other):
         """Car sets itself to other car's speed."""
         #self.speed = (((other.location - 5) - self.location))
-        #correct if other car just lapped 1000
+        #correct if other car just lapped 7000
         if ((other.location - 5) - self.location) < 0:
-            if (((other.location + 995) - self.location) - 2) < 0:
+            if (((other.location + 6995) - self.location) - 2) < 0:
                 self.speed = 0
             else:
-                self.speed = (((other.location + 995) - self.location) - 2)
+                self.speed = (((other.location + 6995) - self.location) - 2)
         else:
             if (((other.location - 5) - self.location) - 2) < 0:
                 self.speed = 0
@@ -46,7 +46,7 @@ class Car:
         """Returns true if car distance to next car is less than speed"""
         #Need to work out location when it loops back
         if ((other.location - 5) - self.location ) < 0:
-            if other.location + 995 - self.location < self.speed:
+            if other.location + 6995 - self.location < self.speed + 3:
                 return True
             else:
                 return False
@@ -57,13 +57,27 @@ class Car:
 
     def set_decelerate_chance(self):
         """This should be for hard mode"""
-        pass
+        if self.location <= 1000:
+            self.decelerate_chance = 1
+        elif 1001 <= self.location <= 2000:
+            self.decelerate_chance = 1.4
+        elif 2001 <= self.location <= 3000:
+            self.decelerate_chance = 1
+        elif 3001 <= self.location <= 4000:
+            self.decelerate_chance = 2.0
+        elif 4001 <= self.location <= 5000:
+            self.decelerate_chance = 1.0
+        elif 5001 <= self.location <= 6000:
+            self.decelerate_chance = 1.4
+        else:
+            self.decelerate_chance = 1
 
     def set_speed(self, other):
         """Sets car speed based on self.location and other.location"""
         if self.calculate_slowdown(other):
             self.slow_down(other)
         else:
+            self.set_decelerate_chance()
             if random.random() <= (.1 * self.decelerate_chance):
                 self.decelerate()
             else:
