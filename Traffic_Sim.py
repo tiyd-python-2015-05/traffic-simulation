@@ -17,13 +17,17 @@ class Car:
 
     def check(self, front_car):
         dist = self.check_dist_to_front_car(front_car)
-        if dist < self.speed:
-            self.speed = dist
-        elif self.speed < 33.33:
+        if self.speed <= 0:
             self.accelerate()
-        if self.slow():
-            if self.speed > 2:
-                self.speed -= 2
+        elif dist < self.speed:
+            self.speed = dist
+        else:
+            if self.slow():
+                if self.speed > 2:
+                    self.speed -= 2
+            else:
+                if self.speed < 33.33:
+                    self.accelerate()
         return (self.position, self.speed)
 
     def slow(self):
@@ -67,16 +71,13 @@ class Simulation:
                     idx = 29
                 pos_speed = car.check(self.cars[idx])
                 one_sec.append(pos_speed)
+                car.set_new_position()
             the_results.append(one_sec)
-            self.update_cars_get_data()
             self.secs -= 1
         return the_results
 
-    def update_cars_get_data(self):
-        for car in self.cars:
-            car.set_new_position()
 
-s = Simulation(120)
+'''s = Simulation(120)
 print(s.cars)
 results = s.start()[60:]
-print(results)
+print(results)'''
