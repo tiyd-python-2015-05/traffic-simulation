@@ -90,8 +90,8 @@ class Car():
         buffer_zone = self.road.validate(rear_bumper - self.desired_spacing)
 
         # Avoid leapfrogging
-        if self.speed > buffer_zone:
-            self.speed = buffer_zone - self.decel_rate
+    #    if self.speed > buffer_zone:
+    #        self.speed = buffer_zone - self.decel_rate
 
         potential_position = self.potential_position()
 
