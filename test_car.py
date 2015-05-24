@@ -65,7 +65,8 @@ def test_brake_if_needed():
     road = Road()
     car1 = Car(road, position=200, init_speed=20)
     car2 = Car(road, position=210)
-    did_brake = car1.brake_if_needed(leading_car=car2)
+    with mock.patch("random.random", return_value=1):
+        did_brake = car1.brake_if_needed(leading_car=car2)
     assert did_brake is True
     assert car1.speed == 5
 
@@ -102,7 +103,8 @@ def test_step():
     road = Road()
     car1 = Car(road, position=1000, init_speed=15)
     car2 = Car(road, position=10)
-    car1.step(car2)
+    with mock.patch("random.random", return_value=1):
+        car1.step(car2)
     assert car1.speed == 5
 
     car1 = Car(road, position=200, init_speed=15)

@@ -16,8 +16,8 @@ from unittest import mock
 """
 def setup():
     road = Road()
-    car1 = Car(road, position=100, init_speed = 36, accel_rate=0)
-    car2 = Car(road, position=200, init_speed = 36, accel_rate=0)
+    car1 = Car(road, position=100, init_speed = 10, accel_rate=0)
+    car2 = Car(road, position=200, init_speed = 10, accel_rate=0)
     cars = [car2, car1]  # reverse order for easier checking
     sim = Simulation(cars=cars)
     return sim
