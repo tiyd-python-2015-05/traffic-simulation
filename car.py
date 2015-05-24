@@ -78,7 +78,7 @@ class Car():
         return self.road.validate(self.position + self.speed *
                                   self.s_per_step)
 
-    def distance_to(self, leading_car):
+    def distance_behind(self, leading_car):
         # TODO: Add tests
         self.position = self.road.validate(self.position)
         leading_car.position = self.road.validate(leading_car.position)
@@ -90,25 +90,21 @@ class Car():
         else:
             return leading_car.position - leading_car.length - self.position
 
-    def brake_if_needed(self, car2):
+    def brake_if_needed(self, leading_car):
         if self.speed > self.desired_speed:
             self.speed = self.desired_speed
 
         braked = False
-        rear_bumper = self.road.validate(car2.position - car2.length)
-        buffer_zone = self.road.validate(rear_bumper - self.desired_spacing)
 
         # Avoid leapfrogging
-        if self.speed > buffer_zone: # TODO: Validate this!
-            self.speed = buffer_zone - self.decel_rate
+        lead_distance = self.distance_behind(leading_car)
+        if self.speed > lead_distance:
+            self.speed = lead_distance
             print("Braking")
             braked = True
-        potential_position = self.potential_position()
 
-        print('id#{} next bumper: {}, buffer_zone: {}, '  \
-              'potential_position: {}, current speed: {}' \
-              .format(self.id, rear_bumper, buffer_zone,
-              potential_position, self.speed))
+        print('id#{} lead_distance {}, current speed: {}' \
+              .format(self.id, round(lead_distance), round(self.speed)))
 
         # if self.position < car2.position:    # FIXME: What if it rolls over?
         #     # TODO: Add a test for lapping
@@ -123,11 +119,10 @@ class Car():
             self.decelerate()
             return True
         else:
-            return braked or True # FIXME: Avoid using braked variable, test
+            return braked or False # FIXME: Avoid using braked variable, test
 
-    def step(self, car2):
-        did_brake = self.brake_if_needed(car2)
-        if not did_brake:
-            self.accelerate()
-        self.update_position(car2)
+    def step(self, leading_car):
+        self.accelerate()
+        did_brake = self.brake_if_needed(leading_car)
+        self.update_position(leading_car)
         return self.position, self.speed
