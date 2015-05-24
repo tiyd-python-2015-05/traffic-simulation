@@ -46,7 +46,7 @@ class Car:
         """Returns true if car distance to next car is less than speed"""
         #Need to work out location when it loops back
         if ((other.location - 5) - self.location ) < 0:
-            if other.location + 995 - self.location < self.speed:
+            if other.location + 995 - self.location < self.speed + 3:
                 return True
             else:
                 return False
