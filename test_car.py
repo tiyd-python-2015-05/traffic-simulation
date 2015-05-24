@@ -20,27 +20,28 @@ from nose.tools import raises
 def test_car_creation():
     road = Road()
     car = Car(road)
-    assert car.desired_speed == 120
+    assert car.desired_speed == 33.333
     assert car.length == 5
     assert car.accel_rate == 2
     assert -0.01 < car.slowing_chance - 0.1 < 0.1
     assert car.decel_rate == 2
+    assert car.s_per_step == 1
 
-    assert car.speed == 60
+    assert car.speed == 15
 
     assert car.desired_spacing == car.speed
 
-    car = Car(road, position=5, desired_speed=130, length=6, accel_rate=3,
-                slowing_chance=0.2, decel_rate=3, init_speed=61,
-                desired_spacing_factor=2)
+    car = Car(road, position=5, desired_speed=40, length=6, accel_rate=3,
+                slowing_chance=0.2, decel_rate=3, init_speed=20,
+                desired_spacing_factor=2, s_per_step= 1)
     assert car.position == 5
-    assert car.desired_speed == 130
+    assert car.desired_speed == 40
     assert car.length == 6
     assert car.accel_rate == 3
     assert -0.01 < car.slowing_chance - 0.2 < 0.1
     assert car.decel_rate == 3
 
-    assert car.speed == 61
+    assert car.speed == 20
 
     assert car.desired_spacing == car.speed * 2
     assert car.id == 1
@@ -50,72 +51,52 @@ def test_car_creation():
 def test_car_accelerate():
     road = Road()
     car = Car(road)
-    assert car.speed == 60
+    assert car.speed == 15
     car.accelerate()
-    assert car.speed == 62
+    assert car.speed == 17
 
 def test_car_stop():
     road = Road()
     car = Car(road)
-    assert car.speed == 60
+    assert car.speed == 15
     car.stop()
     assert car.speed == 0
 
 def test_update_position():
     road = Road()
-    car = Car(road, init_speed=100)
+    car = Car(road, init_speed=10)
     car2 = Car(road, position=500)
-    assert car.position == 0 and car.speed == 100
+    assert car.position == 0 and car.speed == 10
     car.update_position(car2)
-    assert car.position == 0 + car.m_per_s * car.s_per_step
+    assert car.position == 0 + car.speed * car.s_per_step
 
 def test_brake_if_needed():
     # Stop if collision imminent
     road = Road()
-    car1 = Car(road, position=200, init_speed=100)
+    car1 = Car(road, position=200, init_speed=20)
     car2 = Car(road, position=210)
     did_brake = car1.brake_if_needed(car2)
     assert did_brake is True
-    assert car1.speed == 0
-
-def test_match_speed():
-    road = Road()
-    car1 = Car(road, position=200, init_speed=100)
-    car2 = Car(road, position=230)
-    assert car2.speed == 60 != car1.speed
-    car1.match_speed(car2)
-    assert car1.speed == car2.speed == 60
-
-    car1 = Car(road, position=200, init_speed=100)
-    car2 = Car(road, position=240)
-    assert car2.speed == 60 != car1.speed
-    car1.brake_if_needed(car2)
-    assert car1.speed == car2.speed == 60
-
-    car1 = Car(road, position=200, init_speed=100)
-    car2 = Car(road, position=240)
-    assert car2.speed == 60 != car1.speed
-    car1.step(car2)
-
+    assert car1.speed == 10
 
 
 def test_car_slows_if_over_desired_speed():
     road = Road()
-    car1 = Car(road, init_speed=100, desired_speed=60)
+    car1 = Car(road, init_speed=100, desired_speed=30)
     car2 = Car(road, position=900)
     with mock.patch("random.random", return_value=1):
         # disable random braking
         car1.brake_if_needed(car2)
-    assert car1.speed == 60
+    assert car1.speed == 30
 
     with mock.patch("random.random", return_value=0.05):
         # force random braking
         car1.brake_if_needed(car2)
-    assert car1.speed == 58
+    assert car1.speed == 28
 
     car1.speed = 100
     car1.accelerate()
-    assert car1.speed == 60
+    assert car1.speed == 30
 
 def test_car_decelerate():
     road = Road()
@@ -130,15 +111,16 @@ def test_car_decelerate():
 def test_step():
     # Stop if collision imminent
     road = Road()
-    car1 = Car(road, position=200, init_speed=100)
+    car1 = Car(road, position=200, init_speed=15)
     car2 = Car(road, position=210)
     car1.step(car2)
-    assert car1.speed == 0
+    assert car1.speed == 10
 
-    car1 = Car(road, position=200, init_speed=100)
-    car2 = Car(road, position=240)
-    car1.step(car2)
-    assert car1.speed == car2.speed
+    car1 = Car(road, position=200, init_speed=15)
+    car2 = Car(road, position=218)
+    with mock.patch("random.random", return_value=1):
+        car1.step(car2)
+    assert car1.speed == 17
 
     car1 = Car(road, position=200, init_speed=100)
     car2 = Car(road, position=400)
@@ -146,14 +128,15 @@ def test_step():
         car1.step(car2)
     assert car1.speed == 102
 
-def test_accel_and_decel_are_mutually_exclusive():
-    road = Road()
-    for _ in range(100):
-        with mock.patch("random.random", return_value=1):
-            car1 = Car(road, position=200, init_speed=100)
-            car2 = Car(road, position=400)
-            car1.step(car2)
-            assert car1.speed == 102 or car1.speed == 98
+# Decided these don't need to be mutually exclusive
+# def test_accel_and_decel_are_mutually_exclusive():
+#     road = Road()
+#     for _ in range(100):
+#         with mock.patch("random.random", return_value=1):
+#             car1 = Car(road, position=200, init_speed=100)
+#             car2 = Car(road, position=400)
+#             car1.step(car2)
+#             assert car1.speed == 102 or car1.speed == 98
 
 @raises(TypeError)
 def test_car_requires_road():
@@ -161,29 +144,30 @@ def test_car_requires_road():
 
 
 def test_car_is_validating_position_with_road():
-    # On init
-    road = Road()
-    car1 = Car(road, position=2000)
-    assert car1.position == 0
-
-    # In update_position
-    car1 = Car(road, position=100, init_speed=36) # 36 km/h == 10 m/s
-    car2 = Car(road, position=500)
-    car1.position = 1000
-    car1.update_position(car2)
-    assert car1.position == 10
-
-    # In brake_if_needed
-    car1 = Car(road, position=1005, init_speed=36)
-    car2 = Car(road, position=10)
-    did_brake = car1.brake_if_needed(car2)
-    assert did_brake is True
-
-    with mock.patch("random.random", return_value=1):
-        car1 = Car(road, position=500, init_speed=36)
-        car2 = Car(road, position=0)
-        did_brake = car1.brake_if_needed(car2)
-        assert did_brake is False
+    assert False # Need to redo this
+    # # On init
+    # road = Road()
+    # car1 = Car(road, position=2000)
+    # assert car1.position == 0
+    #
+    # # In update_position
+    # car1 = Car(road, position=100, init_speed=36) # 36 km/h == 10 m/s
+    # car2 = Car(road, position=500)
+    # car1.position = 1000
+    # car1.update_position(car2)
+    # assert car1.position == 10
+    #
+    # # In brake_if_needed
+    # car1 = Car(road, position=1005, init_speed=36)
+    # car2 = Car(road, position=10)
+    # did_brake = car1.brake_if_needed(car2)
+    # assert did_brake is True
+    #
+    # with mock.patch("random.random", return_value=1):
+    #     car1 = Car(road, position=500, init_speed=36)
+    #     car2 = Car(road, position=0)
+    #     did_brake = car1.brake_if_needed(car2)
+    #     assert did_brake is False
 
 @raises(TeleportationError)
 def test_car_has_jumped_ahead():

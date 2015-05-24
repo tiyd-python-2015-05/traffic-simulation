@@ -69,9 +69,6 @@ class Car():
         self.position = potential_position
         return self.position
 
-    def match_speed(self, car2):
-        self.speed = car2.speed if car2.speed < self.speed else self.speed
-
     def decelerate(self):
         self.speed = self.speed - self.decel_rate * self.s_per_step
         if self.speed < 0:
