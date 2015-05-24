@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import pandas as pd
 
 
 class Simulator:
@@ -86,8 +87,10 @@ class Simulator:
         and updates the locations,
         then tells the cars what they did
         """
-        self.history.append(self._loc)
-        self.speed_history.append(self._speeds)
+        self.history.append(np.array(self._loc))
+                            
+        self.speed_history.append([np.average(self._speeds), np.std(self._speeds)])
+                                  
         self._loc = self.next_pos % self.road.length
         self.tell()
 
@@ -122,7 +125,7 @@ class Simulator:
             self.update()
             n -= 1
 
-        return np.array(self.history), np.array(self.speed_history)
+        return pd.Series(self.speed_history)#np.array(self.history), np.array(self.speed_history)
 
     def reset(self):
         """
@@ -184,7 +187,6 @@ class Car:
     @property
     def front_zone(self):
         return self.next_pos + self.length * self.min_mult + self.current_speed 
-
 
 class Road:
     """
