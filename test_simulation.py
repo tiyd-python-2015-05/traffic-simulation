@@ -101,6 +101,6 @@ def test_matrix_updates_from_cars():
         sim.turn_count +=1
         sim.advance_cars_and_record()
         sim.decide_speed_and_record()
-        assert sim.data_matrix[1][sim.turn_count][0] ==sim.cars[0].speed
+        assert sim.data_matrix[1][sim.turn_count][0] == sim.cars[0].speed
         assert sim.cars[3].speed == 4
 
