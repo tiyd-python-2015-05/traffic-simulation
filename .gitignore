@@ -65,3 +65,9 @@ target/
 # Temporary data
 .ipynb_checkpoints/
 
+.envrc
+.direnv/
+.idea/
+
+3d_scatter.ipynb
+More_cars.ipynb
