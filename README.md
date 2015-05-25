@@ -1,3 +1,9 @@
+Completed through hard mode.
+
+See the notebooks Traffic Study and Hard Traffic Study for presentation of 
+data.  The files car.py and simulation.py run Normal Mode.  The files
+hard_cars.py and hard_simulation run Hard Mode.
+
 # Traffic simulation
 
 ## Description
