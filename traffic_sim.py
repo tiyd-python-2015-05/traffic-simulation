@@ -8,6 +8,8 @@ class Car:
         self.top_speed = 33.3
         self.acceleration = 2
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
     def accelerate(self, speed, accel_chance):
         if random.random() < (0.1 * accel_chance):
             if speed - 2 < 0:
@@ -20,6 +22,8 @@ class Car:
             else:
                 return self.top_speed
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
     def set_speed(self, distance, your_speed, accel_chance=1):
         new_speed = self.accelerate(your_speed, accel_chance)
         if distance <= new_speed:
@@ -28,11 +32,17 @@ class Car:
             return new_speed
 
 
+#######################################################################################################################
+#######################################################################################################################
+
+
 class Aggressive(Car):
     def __init__(self):
         super().__init__()
         self.top_speed = 38.9
         self.acceleration = 5
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
     def accelerate(self, speed, accel_chance):
         if random.random() < (0.05 * accel_chance):
@@ -47,12 +57,18 @@ class Aggressive(Car):
                 return self.top_speed
 
 
+#######################################################################################################################
+#######################################################################################################################
+
+
 class Commercial(Car):
     def __init__(self):
         super().__init__()
         self.size = 25
         self.top_speed = 27.8
         self.acceleration = 1.5
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
     def set_speed(self, distance, your_speed, accel_chance=1):
         new_speed = self.accelerate(your_speed, accel_chance)
@@ -63,6 +79,7 @@ class Commercial(Car):
 
 
 #######################################################################################################################
+#######################################################################################################################
 
 
 class Simulation:
@@ -71,11 +88,17 @@ class Simulation:
         self.road = road
         self.values = np.zeros((2, n, len(self.cars)))
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
     def initial_positions(self):
         self.values[0][0] = np.linspace(5, (self.road-5), len(self.cars))
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
     def initial_speeds(self):
         self.values[1][0] = np.zeros(len(self.cars))
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
     def find_distance(self, time, car, other_car):
         rear_bumper = self.values[0][time-1][other_car] - self.cars[other_car].size
@@ -83,6 +106,8 @@ class Simulation:
         if distance < 0:
             distance += self.road
         return distance
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
     def get_speed(self, distance, time, car):
         position = self.values[0][time-1][car]
@@ -102,6 +127,8 @@ class Simulation:
         elif 6000 < position <= 7000:
             return self.cars[car].set_speed(distance, your_speed)
 
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
+
     def run_simulation(self):
         self.initial_positions()
         self.initial_speeds()
@@ -119,6 +146,10 @@ class Simulation:
                 if self.values[0][time][index] > self.road:
                     self.values[0][time][index] -= self.road
         return self.values[:, 61:, :]
+
+
+#######################################################################################################################
+#######################################################################################################################
 
 
 def create_cars(number, one_type=True):
