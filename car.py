@@ -69,7 +69,7 @@ class Car():
         return self.position
 
     def decelerate(self):
-        self.speed = self.speed - self.decel_rate * self.s_per_step * 2  # TODO
+        self.speed = self.speed - self.decel_rate * self.s_per_step
         if self.speed < 0:
             self.speed = 0
         print('id#{} Slowing'.format(self.id))
@@ -116,7 +116,7 @@ class Car():
         #         return True
 
         current_slowing_chance = self.slowing_chance # self.slowing_chance * 2\
-            if braked else self.slowing_chance   # FIXME (temp)
+            # if braked else self.slowing_chance   # FIXME (temp)
 
         if random.random() < current_slowing_chance:
             self.decelerate()
@@ -125,7 +125,8 @@ class Car():
             return braked or False
 
     def step(self, leading_car):
-        self.accelerate()
         did_brake = self.brake_if_needed(leading_car)
+        if not did_brake:
+            self.accelerate()
         self.update_position(leading_car)
         return self.position, self.speed
