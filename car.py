@@ -88,7 +88,7 @@ class Car():
             raise TeleportationError("{} is attempting to pass through {}. Previous Position: {} Lead_dist: {}"
                                     .format(self, leading_car, prev_position, lead_distance))
         return self.position
-        
+
     def decelerate(self):
         self.speed = self.speed - self.decel_rate * self.s_per_step
         if self.speed < 0:
@@ -150,8 +150,8 @@ class Car():
         #         self.match_speed(car2)
         #         return True
 
-        current_slowing_chance = self.slowing_chance # self.slowing_chance * 2\
-        # if braked else self.slowing_chance   # FIXME (temp)
+        current_slowing_chance = self.slowing_chance * 2 \
+            if braked else self.slowing_chance   # TODO: Is this desirable?
 
         if random.random() < current_slowing_chance:
             self.decelerate()
