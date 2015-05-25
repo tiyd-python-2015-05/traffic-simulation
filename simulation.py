@@ -58,8 +58,11 @@ class Simulation():
     def step(self):
         for index, car in enumerate(self.cars):
             next_car = self.cars[self.valid_index(index - 1)]
-            car.step(next_car)
+            car.step_speed(next_car)
 #            print(car)
+        for index, car in enumerate(self.cars):
+            next_car = self.cars[self.valid_index(index - 1)]
+            car.update_position(next_car)
         return self.get_locations_speeds()
 
 

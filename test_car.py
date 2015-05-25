@@ -99,35 +99,35 @@ def test_car_decelerate():
     car.decelerate()
     assert car.speed == 0
 
-def test_step():
+def test_step_speed():
     road = Road()
     car1 = Car(road, position=1000, init_speed=15)
     car2 = Car(road, position=10)
     with mock.patch("random.random", return_value=1):
-        car1.step(car2)
+        car1.step_speed(car2)
     assert car1.speed == 5
 
     car1 = Car(road, position=200, init_speed=15)
     car2 = Car(road, position=223) # just enough room to speed up
     with mock.patch("random.random", return_value=1):
-        car1.step(car2)
+        car1.step_speed(car2)
     assert car1.speed == 17
 
     car1 = Car(road, position=200, init_speed=10)
     car2 = Car(road, position=400)
     with mock.patch("random.random", return_value=1):
-        car1.step(car2)
+        car1.step_speed(car2)
     assert car1.speed == 12
 
-# Decided these don't need to be mutually exclusive
-# def test_accel_and_decel_are_mutually_exclusive():
-#     road = Road()
-#     for _ in range(100):
-#         with mock.patch("random.random", return_value=1):
-#             car1 = Car(road, position=200, init_speed=100)
-#             car2 = Car(road, position=400)
-#             car1.step(car2)
-#             assert car1.speed == 102 or car1.speed == 98
+# Undecided these don't need to be mutually exclusive
+def test_accel_and_decel_are_mutually_exclusive():
+    road = Road()
+    for _ in range(100):
+        with mock.patch("random.random", return_value=1):
+            car1 = Car(road, position=200, init_speed=10)
+            car2 = Car(road, position=400)
+            car1.step_speed(car2)
+            assert car1.speed == 12 or car1.speed == 8
 
 @raises(TypeError)
 def test_car_requires_road():
@@ -172,8 +172,8 @@ def test_car_is_already_ahead_no_teleportation_error():
     road = Road()
     car1 = Car(road, position=5, init_speed=10, slowing_chance=0)
     car2 = Car(road, position=0, init_speed=36)
-    car1.step(car2)
-    assert car1.position == 17.0
+    car1.update_position(car2)
+    assert car1.position == 15.0
 
 # Add test - when testing if car should accelerate, a car should never be
 # going faster than the distance between it and the next car

@@ -40,6 +40,7 @@ class Car():
         self.desired_spacing_factor = desired_spacing_factor
         self.position = road.validate(position)
         self.s_per_step = s_per_step
+        self.prev_position = self.position
 
     @property
     def desired_spacing(self):
@@ -58,14 +59,23 @@ class Car():
         self.speed = 0
         print('id#{} Stopping'.format(self.id))
 
-    def update_position(self, car2):
-        leading_car = self.road.validate(car2.position)
+    def update_position(self, leading_car):
+        # leading_car = self.road.validate(car2.position)
+
+        prev_position = self.position
         potential_position = self.potential_position()
-        if potential_position > leading_car \
-            and self.road.validate(self.position) < leading_car:
-            raise TeleportationError("{} is attempting to pass through {}."
-                                     .format(self, car2))
+        lead_distance = self.distance_behind(leading_car) # to check leapfrogging
+
+        # Not needed anymore?
+        # if potential_position > leading_car \
+        #     and self.road.validate(self.position) < leading_car:
+        #     raise TeleportationError("{} is attempting to pass through {}."
+        #                              .format(self, car2))
         self.position = potential_position
+        if self.position - prev_position > lead_distance:
+            raise TeleportationError("{} is attempting to pass through {}. Previous Position: {}"
+                                         .format(self, leading_car, prev_position))
+
         return self.position
 
     def decelerate(self):
@@ -82,13 +92,26 @@ class Car():
         # TODO: Add tests
         self.position = self.road.validate(self.position)
         leading_car.position = self.road.validate(leading_car.position)
-        # Both cars must have same road
+        # Note: Both cars must have same road
 
-        if leading_car.position < self.position:
-            return leading_car.position - leading_car.length - self.position \
-                + self.road.length
-        else:
-            return leading_car.position - leading_car.length - self.position
+        # Add track length if car has looped around
+        self_loop = self.road.length if self.position - \
+            self.prev_position < 0 else 0
+        lead_loop = self.road.length if leading_car.position - \
+            leading_car.prev_position < 0 else 0
+
+        # if self.position + self_loop > leading_car.position + lead_loop:
+        #     raise TeleportationError("{} is attempting to pass through {}. sloop:{} lloop:{}"
+        #                              .format(self, leading_car, self_loop, lead_loop))
+
+        # if leading_car.position < self.position:  # Lead car has looped around
+        #     return leading_car.position - leading_car.length - self.position \
+        #         + self.road.length
+        # else:
+        #     return leading_car.position - leading_car.length - self.position
+        return self.road.validate((leading_car.position + lead_loop) \
+            - leading_car.length - (self.position + self_loop))
+            # TODO: Verify this logic with more tests
 
     def brake_if_needed(self, leading_car):
         if self.speed > self.desired_speed:
@@ -99,7 +122,7 @@ class Car():
         # Avoid leapfrogging
         lead_distance = self.distance_behind(leading_car)
         if self.speed > lead_distance:
-            self.speed = lead_distance
+            self.speed = lead_distance # TODO: Match speed here?
             print("Braking")
             braked = True
 
@@ -116,7 +139,7 @@ class Car():
         #         return True
 
         current_slowing_chance = self.slowing_chance # self.slowing_chance * 2\
-            # if braked else self.slowing_chance   # FIXME (temp)
+        # if braked else self.slowing_chance   # FIXME (temp)
 
         if random.random() < current_slowing_chance:
             self.decelerate()
@@ -124,9 +147,8 @@ class Car():
         else:
             return braked or False
 
-    def step(self, leading_car):
+    def step_speed(self, leading_car):
         did_brake = self.brake_if_needed(leading_car)
         if not did_brake:
             self.accelerate()
-        self.update_position(leading_car)
-        return self.position, self.speed
+        return self.speed
