@@ -9,7 +9,7 @@ class Simulator:
         for car in self.cars:
             car.index = cars.index(car)
             car.road_length = road.length
-            
+
             if car.index == len(self.cars) - 1:
                 car.next_car = self.cars[0]
             else:
@@ -65,7 +65,7 @@ class Simulator:
         would have been one
         """
         self.next_pos
-        
+
         for car in self.cars:
             if not car.safe:
                     self._speeds[car.index] = self._speeds[car.next_car.index]
@@ -168,22 +168,24 @@ class Car:
         # no wrapping
         first = self.next_car.next_pos > self.front_zone and \
                 self.next_car.next_pos % self.road_length > self.next_car.loc
-                
-        # wrapping the car ahead
+
+        # car ahead wraps, safe zone wraps
         second = self.next_car.next_pos % self.road_length < self.next_car.loc and \
                  self.front_zone % self.road_length < self.loc and \
-                 self.next_car.next_pos < self.front_zone % self.road_length
-            
+                 self.next_car.next_pos % self.road_length < self.front_zone \
+                % self.road_length
+
+        # car ahead wraps, safe zone doesn't
         third = self.next_car.next_pos % self.road_length < self.next_car.loc and \
                  self.front_zone % self.road_length > self.loc
-            
+
         if first or second or third:
             return True
         return False
 
     @property
     def front_zone(self):
-        return self.next_pos + self.length * self.min_mult + self.current_speed 
+        return self.next_pos + self.length * self.min_mult + self.current_speed
 
 
 class Road:
