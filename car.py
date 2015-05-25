@@ -72,9 +72,9 @@ class Car():
         #     raise TeleportationError("{} is attempting to pass through {}."
         #                              .format(self, car2))
         self.position = potential_position
-        if self.position - prev_position > lead_distance:
-            raise TeleportationError("{} is attempting to pass through {}. Previous Position: {}"
-                                         .format(self, leading_car, prev_position))
+        if self.position - prev_position > lead_distance and self.position > leading_car.position:
+            raise TeleportationError("{} is attempting to pass through {}. Previous Position: {} Lead_dist: {}"
+                                         .format(self, leading_car, prev_position, lead_distance))
 
         return self.position
 
