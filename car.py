@@ -72,12 +72,23 @@ class Car():
         #     raise TeleportationError("{} is attempting to pass through {}."
         #                              .format(self, car2))
         self.position = potential_position
-        if self.position - prev_position > lead_distance and self.position > leading_car.position:
+        def trying_to_teleport():
+            if self.position - prev_position > lead_distance and \
+                self.position > leading_car.position and \
+                self.road.validate(self.position + 100) > \
+                self.road.validate(leading_car.position + 100):
+                    return True
+            return False
+
+        if trying_to_teleport():  # Stop car if it's trying to "leapfrog"
+            self.position = prev_position
+            self.stop()
+
+        if trying_to_teleport():  # If stopping didn't work, raise an exception
             raise TeleportationError("{} is attempting to pass through {}. Previous Position: {} Lead_dist: {}"
-                                         .format(self, leading_car, prev_position, lead_distance))
-
+                                    .format(self, leading_car, prev_position, lead_distance))
         return self.position
-
+        
     def decelerate(self):
         self.speed = self.speed - self.decel_rate * self.s_per_step
         if self.speed < 0:
@@ -122,7 +133,8 @@ class Car():
         # Avoid leapfrogging
         lead_distance = self.distance_behind(leading_car)
         if self.speed > lead_distance:
-            self.speed = lead_distance # TODO: Match speed here?
+            #self.speed = lead_distance # TODO: Match speed here?
+            self.speed = leading_car.speed
             print("Braking")
             braked = True
 
