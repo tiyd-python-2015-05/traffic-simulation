@@ -43,7 +43,7 @@ class Car:
 
 
     def calculate_slowdown(self, other):
-        """Returns true if car distance to next car is less than speed"""
+        """Returns true if car distance to next car is less than speed."""
         #Need to work out location when it loops back
         if ((other.location - 5) - self.location ) < 0:
             if other.location + 6995 - self.location < self.speed + 3:
@@ -56,7 +56,7 @@ class Car:
             return False
 
     def set_decelerate_chance(self):
-        """This should be for hard mode"""
+        """Changes chance of deceleration based on location."""
         if self.location <= 1000:
             self.decelerate_chance = 1
         elif 1001 <= self.location <= 2000:

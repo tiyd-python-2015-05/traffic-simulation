@@ -8,7 +8,6 @@ class Car:
         self.speed = speed
         self.location = 0
         self.decelerate_chance = 1
-        #self.accelerate_chance will be changed by the simulation for longer distances
 
 
     def accelerate(self):
@@ -26,9 +25,8 @@ class Car:
 
 
     def slow_down(self, other):
-        """Car sets itself to other car's speed."""
-        #self.speed = (((other.location - 5) - self.location))
-        #correct if other car just lapped 1000
+        """Car sets itself to (distance to next car - 2), to be safe.  Accounts
+        for situation where car is lapping the track and resetting to 0 location."""
         if ((other.location - 5) - self.location) < 0:
             if (((other.location + 995) - self.location) - 2) < 0:
                 self.speed = 0
@@ -41,10 +39,8 @@ class Car:
                 self.speed = (((other.location - 5) - self.location) - 2)
 
 
-
     def calculate_slowdown(self, other):
-        """Returns true if car distance to next car is less than speed"""
-        #Need to work out location when it loops back
+        """Returns true if car distance to next car is less than speed + 3."""
         if ((other.location - 5) - self.location ) < 0:
             if other.location + 995 - self.location < self.speed + 3:
                 return True
@@ -55,12 +51,11 @@ class Car:
         else:
             return False
 
-    def set_decelerate_chance(self):
-        """This should be for hard mode"""
-        pass
 
     def set_speed(self, other):
-        """Sets car speed based on self.location and other.location"""
+        """Car calculates whether based on self.location and
+        needs to slow down based on other.location.  If not may accelerate
+        or brake based on random chance."""
         if self.calculate_slowdown(other):
             self.slow_down(other)
         else:

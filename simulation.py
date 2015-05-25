@@ -12,6 +12,7 @@ class Simulation:
 
 
     def create_cars(self, num=30):
+        """Creates cars and puts them in self.cars list."""
         for i in range(num):
             self.cars.append(Car())
 
@@ -39,8 +40,8 @@ class Simulation:
 
 
     def advance_cars_and_record(self):
-        """Sets new car location in data matrix.  Changes location in cars. Tests to see
-        if any cars have crossed 1000."""
+        """Sets new car location in data matrix based on current speed.
+        Changes location in cars. Tests to see if any cars have crossed 1000."""
         self.data_matrix[0][self.turn_count] = self.data_matrix[0][self.turn_count - 1] \
                                                + self.data_matrix[1][self.turn_count - 1]
         for i in np.nditer(self.data_matrix[0][self.turn_count], op_flags=['readwrite']):
@@ -51,6 +52,7 @@ class Simulation:
 
 
     def decide_speed_and_record(self):
+        """Cars set speed based on position of car in front of them."""
         for i in range(len(self.cars)):
             if i == len(self.cars) - 1:
                 (self.cars[i]).set_speed(self.cars[0])
@@ -61,6 +63,8 @@ class Simulation:
 
 
     def run(self):
+        """Runs simulation for setup, 60 seconds of getting cars to speed,
+        and 60 seconds of test data."""
         self.create_cars(self.num_cars)
         self.create_empty_data_matrix()
         self.give_cars_starting_places()
@@ -72,6 +76,8 @@ class Simulation:
 
 
 def n_simulations(n=1000, num_cars=30):
+    """Runs simulation for n trials.  Returns matrix of speeds and locations
+    at all time data points."""
     sim_list = []
     matrix_list = []
     for i in range(n):

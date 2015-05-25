@@ -12,6 +12,7 @@ class Simulation:
 
 
     def create_cars(self, num=210):
+        """Creates cars."""
         for i in range(num):
             self.cars.append(Car())
 
@@ -51,6 +52,7 @@ class Simulation:
 
 
     def decide_speed_and_record(self):
+        """Cars decide speed based on location of car ahead of them."""
         for i in range(len(self.cars)):
             if i == len(self.cars) - 1:
                 (self.cars[i]).set_speed(self.cars[0])
@@ -61,6 +63,8 @@ class Simulation:
 
 
     def run(self):
+        """Runs simulation for setup, 60 seconds of getting cars to speed,
+        and 420 seconds to get cars through the 7km track."""
         self.create_cars(self.num_cars)
         self.create_empty_data_matrix()
         self.give_cars_starting_places()
@@ -72,6 +76,8 @@ class Simulation:
 
 
 def n_simulations(n=1000, num_cars=210):
+    """Runs n simulations and returns 3D matrix with speed and location data
+    at every second."""
     sim_list = []
     matrix_list = []
     for i in range(n):
