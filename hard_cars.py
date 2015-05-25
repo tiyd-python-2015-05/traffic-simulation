@@ -68,7 +68,7 @@ class Car:
         elif 4001 <= self.location <= 5000:
             self.decelerate_chance = 1.0
         elif 5001 <= self.location <= 6000:
-            self.decelerate_chance = 1.4
+            self.decelerate_chance = 1.2
         else:
             self.decelerate_chance = 1
 
