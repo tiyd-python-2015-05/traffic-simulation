@@ -117,8 +117,8 @@ class Simulation:
             speeds.append(self.speed_array()[0].tolist())
         std = st.stdev(speeds)
         mean = st.mean(speeds)
-        ret_st = " mean= "+str(round(std,4)) + " \n"
-        ret_st += " stdev= "+str(round(mean,4)) + "\n"
+        ret_st = " mean= "+str(round(mean,4)) + " \n"
+        ret_st += " stdev= "+str(round(std,4)) + "\n"
         ret_st += "  suggested speed= "+str(round(std+mean,4))+" m/s \n"
         ret_st += "                 = "
         ret_st += str(round((std+mean)*3.6,4))+" km/h "
@@ -127,6 +127,22 @@ class Simulation:
         ret_st += "                 = "
         ret_st += str(int((std+mean)*3.6))+" km/h \n"
         return ret_st
+
+
+    def mean_sd(self, Nruns):
+        self.time = 0
+        sum_x  = 0.
+        sum_x2 = 0.
+        for i in range(60):
+            self.run_once()
+        for i in range(Nruns):
+            self.run_once()
+            spd = self.speed_array().mean()
+            sum_x  += spd
+            sum_x2 += spd**2
+        mu = sum_x / Nruns
+        inner_prod = sum_x2 - sum_x**2/Nruns
+        return mu, math.sqrt(inner_prod / Nruns)
 
 
     def run_once(self):
@@ -300,3 +316,8 @@ if __name__ == '__main__':
 
     print(" ")
     print(hist[0])
+
+    mu, sd = sim.mean_sd(10000)
+    print(" ")
+    print("mean: "+str(round(mu,4))+" std: "+str(round(sd,4)))
+    print((mu+sd)*3.6)
