@@ -1,10 +1,10 @@
 import random
 import numpy as np
-
+from collections import deque
 
 class Simulator:
     def __init__(self, cars, road, delta):
-        self.cars = cars
+        self.cars = deque(cars)
 
         for car in self.cars:
             car.index = cars.index(car)
@@ -88,7 +88,14 @@ class Simulator:
         """
         self.history.append(self._loc)
         self.speed_history.append(self._speeds)
-        self._loc = self.next_pos % self.road.length
+        
+        next_pos = self.next_pos
+        
+        for idx in range(self.length):
+            if next_pos[idx] > self._loc[idx]:
+                self.cars.rotate(1) # for checking the car order
+        
+        self._loc = next_pos % self.road.length
         self.tell()
 
     def step(self):
@@ -123,7 +130,12 @@ class Simulator:
             n -= 1
 
         return np.array(self.history), np.array(self.speed_history)
-
+    
+    def errors(self):
+        for car in self.cars:
+            if not car._loc < car.next._loc:
+                raise Exception("Cars out of order!")
+    
     def reset(self):
         """
         flushes the history

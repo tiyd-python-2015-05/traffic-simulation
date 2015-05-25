@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from collections import deque
 
+
 class Simulator:
     def __init__(self, cars, road, delta):
         self.cars = deque(cars)
@@ -66,12 +67,13 @@ class Simulator:
         would have been one
         """
         self.next_pos
-
+        again = False
+        
         for car in self.cars:
             if not car.safe:
-                    self._speeds[car.index] = self._speeds[car.next_car.index]
-
-
+                    self._speeds[car.index] = self._speeds[car.next_car.index] \
+                    * random.uniform(.66, 1.2) # they're not great at matching speed
+                       
 
     def tell(self):
         """
@@ -129,8 +131,9 @@ class Simulator:
             self.speed_change()
             self.check_next()
             self.update()
+            self.errors()
             n -= 1
-
+            
         return pd.Series(self.speed_history)
     
     def errors(self):
