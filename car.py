@@ -54,8 +54,8 @@ class Car():
             car_slowing_chance=self.car_slowing_chance)
 
     def __repr__(self):
-        return 'id:{} x:{} s:{}'.format(self.id, round(self.position,2),
-                                        round(self.speed, 2))
+        return '{} id:{} x:{} s:{}'.format(self.__class__.__name__, self.id, 
+            round(self.position,2), round(self.speed, 2))
 
     def d_print(self, message):
         if self.verbose:
@@ -143,7 +143,7 @@ class Car():
 
         # Avoid leapfrogging
         lead_distance = self.distance_behind(leading_car)
-        if self.speed > lead_distance:
+        if self.speed * self.desired_spacing_factor > lead_distance:
             #self.speed = lead_distance # TODO: Match speed here?
             self.speed = leading_car.speed
             self.d_print("Braking")
