@@ -68,7 +68,7 @@ class Car():
 
     def stop(self):
         self.speed = 0
-        print('id#{} Stopping'.format(self.id))
+        self.d_print('id#{} Stopping'.format(self.id))
 
     def update_position(self, leading_car):
         # leading_car = self.road.validate(car2.position)
