@@ -52,7 +52,7 @@ class Car:
             self.speed = other.speed
             #self.speed = other.position - self.position - self.length
 
-        if self.position - self.length > other.position:
+        if self.position  > other.position:
             self.stop()
 
 
