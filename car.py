@@ -34,7 +34,7 @@ class Car():
         self.desired_speed = desired_speed
         self.length = length
         self.accel_rate = accel_rate
-        self.slowing_chance = slowing_chance
+        self.car_slowing_chance = slowing_chance
         self.decel_rate = decel_rate
         self.speed = init_speed
         self.desired_spacing_factor = desired_spacing_factor
@@ -46,6 +46,12 @@ class Car():
     @property
     def desired_spacing(self):
         return self.speed * self.desired_spacing_factor
+
+    @property
+    def slowing_chance(self):
+        # TODO: Add tests for road-based slowing
+        return self.road.slow_factor(position=self.position,
+            car_slowing_chance=self.car_slowing_chance)
 
     def __repr__(self):
         return 'id:{} x:{} s:{}'.format(self.id, round(self.position,2),

@@ -30,3 +30,14 @@ def test_validate_position():
     assert road.validate(-1000) == 0
     assert road.validate(-1005) == 995
     assert road.validate(-2005) == 995
+
+def test_hard_road_slowing_factor():
+    road = Road(length=7000, slowing_factor=1, hard_road=True)
+    assert road.slow_factor(position=0, car_slowing_chance=0.1) == 0.1
+    assert road.slow_factor(position=500, car_slowing_chance=0.1) == 0.1
+    assert road.slow_factor(position=1000, car_slowing_chance=0.1) == 0.1 * 1.4
+    assert road.slow_factor(position=1500, car_slowing_chance=0.1) == 0.1 * 1.4
+    assert road.slow_factor(position=2000, car_slowing_chance=0.1) == 0.1
+    assert road.slow_factor(position=3500, car_slowing_chance=0.1) == 0.1 * 2.0
+    assert road.slow_factor(position=5500, car_slowing_chance=0.1) == 0.1 * 1.2
+    assert road.slow_factor(position=6500, car_slowing_chance=0.1) == 0.1
