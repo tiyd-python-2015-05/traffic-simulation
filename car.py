@@ -28,7 +28,7 @@ class Car():
 
     def __init__(self, road, position=0, desired_speed=33.333, length=5, accel_rate=2,
                 slowing_chance=0.1, decel_rate=2, init_speed=15,
-                desired_spacing_factor=1, s_per_step=1):
+                desired_spacing_factor=1, s_per_step=1, verbose=False):
         self.id = next(self._ids)
         self.road = road
         self.desired_speed = desired_speed
@@ -41,6 +41,7 @@ class Car():
         self.position = road.validate(position)
         self.s_per_step = s_per_step
         self.prev_position = self.position
+        self.verbose = verbose
 
     @property
     def desired_spacing(self):
@@ -49,6 +50,10 @@ class Car():
     def __repr__(self):
         return 'id:{} x:{} s:{}'.format(self.id, round(self.position,2),
                                         round(self.speed, 2))
+
+    def d_print(self, message):
+        if self.verbose:
+            print(message)
 
     def accelerate(self):
         self.speed = self.speed + self.accel_rate
@@ -93,7 +98,7 @@ class Car():
         self.speed = self.speed - self.decel_rate * self.s_per_step
         if self.speed < 0:
             self.speed = 0
-        print('id#{} Slowing'.format(self.id))
+        self.d_print('id#{} Slowing'.format(self.id))
 
     def potential_position(self):
         return self.road.validate(self.position + self.speed *
@@ -135,10 +140,10 @@ class Car():
         if self.speed > lead_distance:
             #self.speed = lead_distance # TODO: Match speed here?
             self.speed = leading_car.speed
-            print("Braking")
+            self.d_print("Braking")
             braked = True
 
-        print('id#{} lead_distance {}, current speed: {}' \
+        self.d_print('id#{} lead_distance {}, current speed: {}' \
               .format(self.id, round(lead_distance), round(self.speed)))
 
         # if self.position < car2.position:    # FIXME: What if it rolls over?
