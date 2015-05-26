@@ -1,0 +1,44 @@
+Description:
+  A _Simulation_ of the traffic patterns of many different _Cars_ on a _Road_.
+  The simulation should determine the optimal speed limit for the road
+  with given cars.
+  In hard mode, the cars may have more complex behavior, and the road
+  conditions vary at different points
+
+Assumptions
+  Drivers want to go up to 120 km/hr.
+  The average car is 5 meters long.
+  Drivers want at least a number of meters equal to their speed in meters/second between them and the next car.
+  Drivers will accelerate 2 m/s up to their desired speed as long as they have room to do so.
+  If another car is too close, drivers will match that car's speed until they have room again.
+  If a driver would hit another car by continuing, they stop.
+  Drivers will randomly (10% chance each second) slow by 2 m/s.
+  This section of road is one lane going one way.
+  *Position of car is recorded as the front of the car, so the back is 1 car length in -x dir
+  *Cars move in the +x direction
+  *Units are m, km/h, and seconds, with a conversion to m/s and m done wherever possible
+  *Set initial speed to half the desired speed, evenly spaced
+
+Responsibilities:
+  Car:
+    Must know about car in front's current position and speed
+    Created with an accel rate, desired speed, size, min spacing,
+      slowing chance, length (assume 5m for now), position
+    At each time step, make decision whether to speed up, slow down, or stop,
+      based on leading car's current position/speed, self's desired following distance,
+      and self's current speed, desired speed, and slowing chance, and road conditions
+      THEN update position with new speed, etc
+    Car stops if continuing will cause a collision (collisions not modeled)
+    Ask the Road current road condition
+    Ask the Road if current position is valid or has to turn over
+
+  Road:
+    Tells the car the current conditions at its position when asked
+    Tells the car if it needs to reset the x position
+
+  Simulation:
+    Is passed in a set of cars X and a roadX
+    Advances the step count and polls each car's position, and
+      reports the next car's position to each car
+    Saves position of each car into a time x road position numpy array
+    Returns the numpy array after the appropriate number of steps
